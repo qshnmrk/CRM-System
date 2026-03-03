@@ -1,0 +1,15 @@
+:root {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-base: #ffac85;
+
+  --color-blue: #1f75fe;
+  --color-red: #ff3434;
+
+  --font-family-base: "Montserrat", sans-serif;
+
+  --border: 1px solid var(--color-black);
+  --border-radius: 8px;
+
+  --transition-duration: 0.2s;
+}

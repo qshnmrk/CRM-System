@@ -1,0 +1,116 @@
+.todo {
+  font-family: var(--font-family-base);
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+
+  &__title {
+    text-align: center;
+  }
+
+  &__form {
+    width: 400px;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 80% 1fr;
+    column-gap: 10px;
+  }
+
+  &__field-input {
+    width: 100%;
+    height: 100%;
+    border: var(--border);
+    border-radius: var(--border-radius);
+  }
+
+  &__button-add {
+    font-weight: bold;
+    color: var(--color-white);
+    background-color: var(--color-blue);
+    border: var(--border);
+    border-radius: var(--border-radius);
+  }
+
+  &__menu {
+    &-list {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &-link {
+      color: var(--color-black);
+      font-size: 20px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
+  &__item {
+    width: 100%;
+    height: 70px;
+    display: grid;
+    grid-template-columns: 20px 50% 50px 50px;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: var(--color-white);
+    border: var(--border);
+    border-radius: var(--border-radius);
+
+    &-button-edit,
+    &-button-delete {
+      width: 50px;
+      height: 50px;
+      padding: 0;
+      border: var(--border);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    &-button-edit {
+      background-color: var(--color-blue);
+    }
+
+    &-button-delete {
+      background-color: var(--color-red);
+    }
+
+    &-icon {
+      color: var(--color-white);
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+  }
+
+  &__empty {
+    width: 100%;
+    height: 240px;
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: var(--border);
+    border-radius: var(--border-radius);
+
+    &-message {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    &-icon {
+      width: 100px;
+      height: 100px;
+      color: var(--color-black);
+    }
+  }
+}

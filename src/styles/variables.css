@@ -1,10 +1,12 @@
 :root {
   --color-white: #ffffff;
   --color-black: #000000;
-  --color-base: #ffac85;
+  --color-base: #7fff7a;
+  --color-accent: #3f7e3d;
+  --color-gray: #bebebe;
 
   --color-blue: #1f75fe;
-  --color-red: #ff3434;
+  --color-red: #d80000;
 
   --font-family-base: "Montserrat", sans-serif;
 

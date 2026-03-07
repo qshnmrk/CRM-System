@@ -1,0 +1,16 @@
+.button {
+  color: var(--color-white);
+  background-color: var(--color-black);
+  font-weight: bold;
+  border: var(--border);
+  border-radius: var(--border-radius);
+
+  &:not(:disabled) {
+    //написать потом здесь стили для ховер и актив кнопки
+  }
+
+  &:disabled {
+    background-color: var(--color-gray);
+    cursor: not-allowed;
+  }
+}

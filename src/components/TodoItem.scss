@@ -1,0 +1,34 @@
+.todo-item {
+  &__checkbox {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    justify-self: center;
+    align-self: center;
+    border: var(--border);
+    border-radius: var(--border-radius);
+
+    &:checked {
+      background: var(--color-black) url("../assets/icons/check.svg")
+        no-repeat center / contain;
+      color: var(--color-white);
+    }
+  }
+
+  &__label {
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    color: var(--color-white);
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    text-wrap: wrap;
+    word-break: break-word;
+  }
+
+  &__field-edit {
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+  }
+}

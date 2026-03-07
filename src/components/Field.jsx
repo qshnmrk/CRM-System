@@ -1,18 +1,35 @@
-const Field = (newTitle, setNewTitle) => {
+import "./Field.scss"
+const Field = (props) => {
+  const {
+    className,
+    id,
+    placeholder,
+    label,
+    type = "text",
+    value,
+    onInput,
+    ref,
+    error,
+  } = props
+
   return (
-    <div className="todo__field">
+    <div className={`field ${className}`}>
       <label
-        className="todo__field-label"
-        htmlFor="new-task"
-      ></label>
+        className="field__label"
+        htmlFor={id}
+      >
+        {label}
+      </label>
       <input
-        id="new-task"
-        className="todo__field-input"
-        type="text"
-        placeholder="Task to be done..."
-        value={newTitle}
-        onChange={(event) => setNewTitle(event.target.value)}
+        id={id}
+        className={`field__input ${error ? "is-invalid" : ""}`}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onInput={onInput}
+        ref={ref}
       />
+      {error && <span className="field__error">{error}</span>}
     </div>
   )
 }

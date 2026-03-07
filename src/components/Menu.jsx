@@ -1,4 +1,7 @@
-const Menu = (tasks) => {
+import { memo } from "react"
+const Menu = (props) => {
+  const { total, done } = props
+
   return (
     <nav className="todo__menu">
       <ul className="todo__menu-list">
@@ -7,7 +10,7 @@ const Menu = (tasks) => {
             className="todo__menu-link"
             href=""
           >
-            All ({tasks.length})
+            All ({total})
           </a>
         </li>
         <li className="todo__menu-item">
@@ -15,7 +18,7 @@ const Menu = (tasks) => {
             className="todo__menu-link"
             href=""
           >
-            In Work ({/*tasks.length - isDone.length*/})
+            In Work ({total - done})
           </a>
         </li>
         <li className="todo__menu-item">
@@ -23,11 +26,11 @@ const Menu = (tasks) => {
             className="todo__menu-link"
             href=""
           >
-            Done ({/*isDone.length*/})
+            Done ({done})
           </a>
         </li>
       </ul>
     </nav>
   )
 }
-export default Menu
+export default memo(Menu)

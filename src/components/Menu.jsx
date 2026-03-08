@@ -8,6 +8,7 @@ const Menu = (props) => {
         <li className="todo__menu-item">
           <a
             className="todo__menu-link"
+            aria-description='Show Section "All"'
             href=""
           >
             All ({total})
@@ -16,6 +17,7 @@ const Menu = (props) => {
         <li className="todo__menu-item">
           <a
             className="todo__menu-link"
+            aria-description='Show Section "In Work"'
             href=""
           >
             In Work ({total - done})
@@ -24,6 +26,7 @@ const Menu = (props) => {
         <li className="todo__menu-item">
           <a
             className="todo__menu-link"
+            aria-description='Show Section "Done"'
             href=""
           >
             Done ({done})

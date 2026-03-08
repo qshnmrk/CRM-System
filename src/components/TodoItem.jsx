@@ -15,18 +15,46 @@ const TodoItem = (props) => {
     onAdmitTaskButtonClick,
     onTaskCompleteChange,
     isEditing,
+    newTaskInputRef,
   } = props
 
   const [newTaskTitle, setNewTaskTitle] = useState(title)
 
+  const [error, setError] = useState(null)
+
+  const validateNewTaskTitle = (title) => {
+    const clearTitle = title.trim()
+    const hasOnlySpaces = title.length > 0 && clearTitle.length === 0
+
+    if (hasOnlySpaces) {
+      return setError(`The task can't be empty`)
+    } else if (clearTitle.length < 2) {
+      return setError("The minimum title length is 2 characters!")
+    } else if (clearTitle.length > 64) {
+      return setError("The maximum title length is 64 characters!")
+    } else {
+      return clearTitle
+    }
+  }
+
+  const onInput = (event) => {
+    const { value } = event.target
+
+    setError(null)
+    validateNewTaskTitle(value)
+    setNewTaskTitle(value)
+  }
+
   const handleAdmitClick = useCallback(() => {
-    if (newTaskTitle.trim().length > 0) {
+    if (validateNewTaskTitle(newTaskTitle)) {
+      setError(null)
       onAdmitTaskButtonClick(id, newTaskTitle)
     }
   }, [newTaskTitle])
 
   const handleCloseClick = () => {
     setNewTaskTitle(title)
+    setError(null)
     onCloseTaskButtonClick(id)
   }
 
@@ -53,9 +81,11 @@ const TodoItem = (props) => {
         <>
           <Field
             className="todo-item__field-edit"
-            placeholder="Edit Task"
+            placeholder="Task to be edited..."
             value={newTaskTitle}
-            onInput={(event) => setNewTaskTitle(event.target.value)}
+            onInput={onInput}
+            ref={newTaskInputRef}
+            error={error}
           />
           <Button
             className="todo__item-button-admit"

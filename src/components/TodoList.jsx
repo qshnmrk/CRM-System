@@ -11,6 +11,7 @@ const TodoList = (props) => {
     onAdmitTaskButtonClick,
     onTaskCompleteChange,
     editingTaskId,
+    newTaskInputRef,
   } = props
 
   const hasTasks = tasks.length > 0
@@ -31,6 +32,7 @@ const TodoList = (props) => {
           onAdmitTaskButtonClick={onAdmitTaskButtonClick}
           onTaskCompleteChange={onTaskCompleteChange}
           isEditing={editingTaskId === task.id}
+          newTaskInputRef={newTaskInputRef}
           {...task}
         />
       ))}

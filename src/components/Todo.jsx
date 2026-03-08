@@ -106,26 +106,34 @@ const Todo = () => {
     })
   }, [])
 
-  // const closeEdit = useCallback((taskId) => {
-  //   setEditingTaskId(null)
-  // }, [])
+  const closeEdit = useCallback((taskId) => {
+    setEditingTaskId(null)
+  }, [])
 
-  // const admitEdit = useCallback((taskId, newTitle) => {
-  //   setTasks((prevTasks) =>
-  //     prevTasks.map((task) => {
-  //       if (task.id === taskId) {
-  //         return { ...task, title: newTitle }
-  //       }
+  const admitEdit = useCallback((taskId, newTitle) => {
+    fetch(`${BASE_URL}/todos/${taskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: newTitle }),
+    }).then(() => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => {
+          if (task.id === taskId) {
+            return { ...task, title: newTitle }
+          }
 
-  //       return task
-  //     })
-  //   )
-  //   setEditingTaskId(null)
-  // }, [])
+          return task
+        })
+      )
+      setEditingTaskId(null)
+    })
+  }, [])
 
-  // const editTask = useCallback((taskId) => {
-  //   setEditingTaskId(taskId)
-  // }, [])
+  const editTask = useCallback((taskId) => {
+    setEditingTaskId(taskId)
+  }, [])
 
   const toggleTaskComplete = useCallback((taskId, isDone) => {
     fetch(`${BASE_URL}/todos/${taskId}`, {
@@ -163,11 +171,12 @@ const Todo = () => {
       <TodoList
         tasks={tasks}
         onDeleteTaskButtonClick={deleteTask}
-        // editingTaskId={editingTaskId}
-        // onEditTaskButtonClick={editTask}
+        editingTaskId={editingTaskId}
+        onEditTaskButtonClick={editTask}
         onTaskCompleteChange={toggleTaskComplete}
-        // onCloseTaskButtonClick={closeEdit}
-        // onAdmitTaskButtonClick={admitEdit}
+        onCloseTaskButtonClick={closeEdit}
+        onAdmitTaskButtonClick={admitEdit}
+        newTaskInputRef={newTaskInputRef}
       />
     </div>
   )

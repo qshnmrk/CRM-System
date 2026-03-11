@@ -30,6 +30,10 @@
       justify-content: space-between;
     }
 
+    &-item {
+      text-align: center;
+    }
+
     &-link {
       color: var(--color-black);
       font-size: 20px;
@@ -37,6 +41,11 @@
       text-decoration: none;
       border: 1px solid transparent;
       border-radius: var(--border-radius);
+      cursor: pointer;
+
+      &.is-active {
+        text-decoration: underline;
+      }
     }
   }
 

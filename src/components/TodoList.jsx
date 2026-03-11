@@ -14,9 +14,7 @@ const TodoList = (props) => {
     newTaskInputRef,
   } = props
 
-  const hasTasks = tasks.length > 0
-
-  if (!hasTasks) {
+  if (tasks.length === 0) {
     return <TodoEmpty />
   }
 

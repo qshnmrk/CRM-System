@@ -7,12 +7,16 @@
     align-self: center;
     border: var(--border);
     border-radius: var(--border-radius);
+    cursor: pointer;
 
     &:checked {
       background: var(--color-black) url("../assets/icons/check.svg")
         no-repeat center / contain;
       color: var(--color-white);
     }
+  }
+
+  &__edit-form {
   }
 
   &__label {

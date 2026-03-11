@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react"
+import { memo, useCallback, useEffect, useState } from "react"
 import Button from "./Button"
 import Field from "./Field"
 import "./Todo.scss"
@@ -22,6 +22,13 @@ const TodoItem = (props) => {
 
   const [error, setError] = useState(null)
 
+  useEffect(() => {
+    if (!isEditing) {
+      setNewTaskTitle(title)
+      setError(null)
+    }
+  }, [title, isEditing])
+
   const validateNewTaskTitle = (title) => {
     const clearTitle = title.trim()
     const hasOnlySpaces = title.length > 0 && clearTitle.length === 0
@@ -44,6 +51,19 @@ const TodoItem = (props) => {
     validateNewTaskTitle(value)
     setNewTaskTitle(value)
   }
+
+  const onBlur = () => {
+    setError(null)
+  }
+
+  const onSubmit = useCallback(() => {
+    event.preventDefault()
+
+    if (validateNewTaskTitle(newTaskTitle)) {
+      setError(null)
+      onAdmitTaskButtonClick(id, newTaskTitle)
+    }
+  }, [newTaskTitle])
 
   const handleAdmitClick = useCallback(() => {
     if (validateNewTaskTitle(newTaskTitle)) {
@@ -79,14 +99,20 @@ const TodoItem = (props) => {
       />
       {isEditing ? (
         <>
-          <Field
-            className="todo-item__field-edit"
-            placeholder="Task to be edited..."
-            value={newTaskTitle}
-            onInput={onInput}
-            ref={newTaskInputRef}
-            error={error}
-          />
+          <form
+            className="todo-item__edit-form"
+            onSubmit={onSubmit}
+          >
+            <Field
+              className="todo-item__field-edit"
+              placeholder="Task to be edited..."
+              value={newTaskTitle}
+              onInput={onInput}
+              ref={newTaskInputRef}
+              error={error}
+              onBlur={onBlur}
+            />
+          </form>
           <Button
             className="todo__item-button-admit"
             title="Admit"
@@ -95,6 +121,7 @@ const TodoItem = (props) => {
             iconType="admit"
             onClick={handleAdmitClick}
           />
+
           <Button
             className="todo__item-button-close"
             title="Close"

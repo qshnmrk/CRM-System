@@ -1,15 +1,15 @@
 :root {
   --color-white: #ffffff;
   --color-black: #000000;
-  --color-pastel-1: #ff9baa;
-  --color-pastel-2: #a8e4a0;
-  --color-pastel-3: #afdafc;
-  --color-pastel-4: #ccccff;
-  --color-pastel-5: #efa94a;
-  --color-pastel-6: #71bc78;
-  --color-gray: #bebebe;
 
-  --color-blue: #1f75fe;
+  --color-pastel-1: #ff9baa;
+  --color-pastel-2: #ff8c69;
+  --color-pastel-3: #fce883;
+  --color-pastel-4: #a8e4a0;
+  --color-pastel-5: #afdafc;
+  --color-pastel-6: #ccccff;
+
+  --color-gray: #bebebe;
   --color-red: #d80000;
 
   --font-family-base: "Montserrat", sans-serif;

@@ -40,6 +40,10 @@ const AddTaskForm = (props) => {
     setNewTaskTitle(value)
   }
 
+  const onBlur = () => {
+    setError(null)
+  }
+
   const clearNewTaskTitle = newTaskTitle.trim()
   const isNewTaskTitleEmpty = clearNewTaskTitle.length === 0
 
@@ -57,6 +61,7 @@ const AddTaskForm = (props) => {
         onInput={onInput}
         ref={newTaskInputRef}
         error={error}
+        onBlur={onBlur}
       />
       <Button
         className="todo__button-add"

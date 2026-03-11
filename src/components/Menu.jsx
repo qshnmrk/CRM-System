@@ -1,35 +1,44 @@
 import { memo } from "react"
 const Menu = (props) => {
-  const { total, done } = props
+  const {
+    totalCount,
+    inWorkCount,
+    isDoneCount,
+    currentFilter,
+    onFilterChange,
+  } = props
 
   return (
     <nav className="todo__menu">
       <ul className="todo__menu-list">
         <li className="todo__menu-item">
           <a
-            className="todo__menu-link"
+            className={`todo__menu-link ${currentFilter === "all" ? "is-active" : ""}`}
             aria-description='Show Section "All"'
-            href=""
+            onClick={() => onFilterChange("all")}
+            tabIndex={0}
           >
-            All ({total})
+            All ({totalCount})
           </a>
         </li>
         <li className="todo__menu-item">
           <a
-            className="todo__menu-link"
+            className={`todo__menu-link ${currentFilter === "inWork" ? "is-active" : ""}`}
             aria-description='Show Section "In Work"'
-            href=""
+            onClick={() => onFilterChange("inWork")}
+            tabIndex={0}
           >
-            In Work ({total - done})
+            In Work ({inWorkCount})
           </a>
         </li>
         <li className="todo__menu-item">
           <a
-            className="todo__menu-link"
+            className={`todo__menu-link ${currentFilter === "isDone" ? "is-active" : ""}`}
             aria-description='Show Section "Done"'
-            href=""
+            onClick={() => onFilterChange("isDone")}
+            tabIndex={0}
           >
-            Done ({done})
+            Done ({isDoneCount})
           </a>
         </li>
       </ul>

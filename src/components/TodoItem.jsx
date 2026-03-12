@@ -56,21 +56,24 @@ const TodoItem = (props) => {
     setError(null)
   }
 
-  const onSubmit = useCallback(() => {
-    event.preventDefault()
+  const onSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
 
-    if (validateNewTaskTitle(newTaskTitle)) {
-      setError(null)
-      onAdmitTaskButtonClick(id, newTaskTitle)
-    }
-  }, [newTaskTitle])
+      if (validateNewTaskTitle(newTaskTitle)) {
+        setError(null)
+        onAdmitTaskButtonClick(id, newTaskTitle)
+      }
+    },
+    [newTaskTitle]
+  )
 
   const handleAdmitClick = useCallback(() => {
     if (validateNewTaskTitle(newTaskTitle)) {
       setError(null)
       onAdmitTaskButtonClick(id, newTaskTitle)
     }
-  }, [newTaskTitle])
+  }, [newTaskTitle, id, onAdmitTaskButtonClick])
 
   const handleCloseClick = () => {
     setNewTaskTitle(title)

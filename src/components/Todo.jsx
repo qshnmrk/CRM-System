@@ -1,18 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { todoApi } from "../api/todoApi"
 import AddTaskForm from "./AddTaskForm"
 import Menu from "./Menu"
 import "./Todo.scss"
 import TodoList from "./TodoList"
 
 const Todo = () => {
-  const BASE_URL = "https://easydev.club/api/v1"
-
   const [tasks, setTasks] = useState([])
-
   const [newTaskTitle, setNewTaskTitle] = useState("")
-
   const [editingTaskId, setEditingTaskId] = useState(null)
-
   const [taskCounts, setTaskCounts] = useState({
     all: 0,
     inWork: 0,
@@ -22,50 +18,33 @@ const Todo = () => {
   const newTaskInputRef = useRef(null)
 
   const [currentFilter, setCurrentFilter] = useState("all")
-
   const totalCount = taskCounts.all
   const inWorkCount = taskCounts.inWork
   const isDoneCount = taskCounts.completed
 
-  const fetchTasks = useCallback((filter) => {
-    let url = `${BASE_URL}/todos`
+  const updateTasks = useCallback(async () => {
+    try {
+      const response = await todoApi.getAllTasks(currentFilter)
 
-    if (filter === "inWork") {
-      url = `${BASE_URL}/todos?filter=inWork`
-    } else if (filter === "isDone") {
-      url = `${BASE_URL}/todos?filter=completed`
-    }
+      if (response?.data && Array.isArray(response.data)) {
+        setTasks(response.data)
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+        if (response?.info) {
+          setTaskCounts({
+            all: response.info.all || 0,
+            inWork: response.info.inWork || 0,
+            completed: response.info.completed || 0,
+          })
         }
-        return response.json()
-      })
-      .then((apiResponse) => {
-        console.log("API Response:", apiResponse)
-
-        if (apiResponse?.data && Array.isArray(apiResponse.data)) {
-          setTasks(apiResponse.data)
-
-          if (apiResponse.info) {
-            setTaskCounts({
-              all: apiResponse.info.all || 0,
-              inWork: apiResponse.info.inWork || 0,
-              completed: apiResponse.info.completed || 0,
-            })
-          }
-        } else {
-          console.error("Unexpected API response:", apiResponse)
-          setTasks([])
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching tasks:", error)
+      } else {
+        console.error("Unexpected API response:", response)
         setTasks([])
-      })
-  }, [])
+      }
+    } catch (error) {
+      console.error("Error fetching tasks, error")
+      setTasks([])
+    }
+  }, [currentFilter])
 
   const handleFilterChange = (filter) => {
     closeEdit()
@@ -76,106 +55,175 @@ const Todo = () => {
     if (newTaskInputRef?.current) {
       newTaskInputRef.current.focus()
     }
-    fetchTasks(currentFilter)
-  }, [fetchTasks, currentFilter])
-
-  const addTask = useCallback(
-    (title) => {
-      const newTask = {
-        title,
-        isDone: false,
-      }
-
-      fetch(`${BASE_URL}/todos`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTask),
-      })
-        .then((response) => response.json())
-        .then((addedTaskResponse) => {
-          console.log("Add task response:", addedTaskResponse)
-
-          if (addedTaskResponse && addedTaskResponse.data) {
-            fetchTasks(currentFilter)
-          } else if (addedTaskResponse && addedTaskResponse.id) {
-            fetchTasks(currentFilter)
-          }
-
-          setNewTaskTitle("")
-          if (newTaskInputRef?.current) {
-            newTaskInputRef.current.focus()
-          }
-        })
-        .catch((error) => {
-          console.error("Error adding task:", error)
-        })
-    },
-    [fetchTasks, currentFilter]
-  )
-
-  const deleteTask = useCallback(
-    (taskId) => {
-      fetch(`${BASE_URL}/todos/${taskId}`, {
-        method: "DELETE",
-      })
-        .then(() => {
-          fetchTasks(currentFilter)
-        })
-        .catch((error) => {
-          console.error("Error deleting task:", error)
-        })
-    },
-    [fetchTasks, currentFilter]
-  )
+    updateTasks()
+  }, [updateTasks])
 
   const closeEdit = useCallback(() => {
     setEditingTaskId(null)
   }, [])
 
-  const admitEdit = useCallback(
-    (taskId, newTitle) => {
-      fetch(`${BASE_URL}/todos/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: newTitle }),
-      })
-        .then(() => {
-          fetchTasks(currentFilter)
-          setEditingTaskId(null)
-        })
-        .catch((error) => {
-          console.error("Error editing task:", error)
-        })
-    },
-    [fetchTasks, currentFilter]
-  )
+  // const addTask = useCallback(
+  //   (title) => {
+  //     const tempId = crypto?.randomUUID?.() ?? `temp-${Date.now()}`
 
-  const editTask = useCallback((taskId) => {
-    setEditingTaskId(taskId)
-  }, [])
+  //     const optimisticTask = {
+  //       id: tempId,
+  //       title,
+  //       isDone: false,
+  //     }
 
-  const toggleTaskComplete = useCallback(
-    (taskId, isDone) => {
-      fetch(`${BASE_URL}/todos/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ isDone }),
-      })
-        .then(() => {
-          fetchTasks(currentFilter)
-        })
-        .catch((error) => {
-          console.error("Error toggling task:", error)
-        })
-    },
-    [fetchTasks, currentFilter]
-  )
+  //     setTasks((prevTasks) => [...prevTasks, optimisticTask])
+
+  //     setNewTaskTitle("")
+
+  //     const newTask = {
+  //       title,
+  //       isDone: false,
+  //     }
+
+  //     fetch(`${BASE_URL}/todos`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(newTask),
+  //     })
+  //       .then((response) => response.json())
+  //       .then((addedTaskResponse) => {
+  //         console.log("Add task response:", addedTaskResponse)
+
+  //         fetchTasks(currentFilter)
+
+  //         setNewTaskTitle("")
+
+  //         if (newTaskInputRef?.current) {
+  //           newTaskInputRef.current.focus()
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error adding task:", error)
+  //         setTasks((prevTasks) =>
+  //           prevTasks.filter((task) => task.id !== tempId)
+  //         )
+  //         setNewTaskTitle(title)
+  //       })
+  //   },
+  //   [fetchTasks, currentFilter]
+  // )
+
+  // const deleteTask = useCallback(
+  //   (taskId) => {
+  //     let previousTasks = []
+
+  //     setTasks((prevTasks) => {
+  //       previousTasks = prevTasks
+  //       return prevTasks.filter((task) => task.id !== taskId)
+  //     })
+
+  //     fetch(`${BASE_URL}/todos/${taskId}`, {
+  //       method: "DELETE",
+  //     })
+  //       .then(() => {
+  //         fetchTasks(currentFilter)
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error deleting task:", error)
+
+  //         setTasks(previousTasks)
+
+  //         fetchTasks(currentFilter)
+  //       })
+  //   },
+  //   [fetchTasks, currentFilter]
+  // )
+
+  // const admitEdit = useCallback(
+  //   (taskId, newTitle) => {
+  //     const origTask = tasks.find((task) => task.id === taskId)
+  //     const origTaskTitle = origTask.title
+
+  //     if (origTaskTitle === newTitle) {
+  //       setEditingTaskId(null)
+  //       return
+  //     }
+
+  //     setTasks((prevTasks) =>
+  //       prevTasks.map((task) =>
+  //         task.id === taskId ? { ...task, title: newTitle } : task
+  //       )
+  //     )
+
+  //     setEditingTaskId(null)
+
+  //     fetch(`${BASE_URL}/todos/${taskId}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ title: newTitle }),
+  //     })
+  //       .then(() => {
+  //         fetchTasks(currentFilter)
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error editing task:", error)
+  //         setTasks((prevTasks) =>
+  //           prevTasks.map((task) =>
+  //             task.id === taskId
+  //               ? { ...task, title: origTaskTitle }
+  //               : task
+  //           )
+  //         )
+  //         fetchTasks(currentFilter)
+  //       })
+  //   },
+  //   [fetchTasks, currentFilter, tasks]
+  // )
+
+  // const editTask = useCallback((taskId) => {
+  //   setEditingTaskId(taskId)
+  // }, [])
+
+  // const toggleTaskComplete = useCallback(
+  //   (taskId, isDone) => {
+  //     let previousState = null
+
+  //     setTasks((prevTasks) => {
+  //       const taskToUpdate = prevTasks.find(
+  //         (task) => task.id === taskId
+  //       )
+  //       previousState = taskToUpdate?.isDone
+
+  //       return prevTasks.map((task) =>
+  //         task.id === taskId ? { ...task, isDone } : task
+  //       )
+  //     })
+
+  //     fetch(`${BASE_URL}/todos/${taskId}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ isDone }),
+  //     })
+  //       .then(() => {
+  //         fetchTasks(currentFilter)
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error toggling task:", error)
+
+  //         setTasks((prevTasks) =>
+  //           prevTasks.map((task) =>
+  //             task.id === taskId
+  //               ? { ...task, isDone: prevState }
+  //               : task
+  //           )
+  //         )
+  //         fetchTasks(currentFilter)
+  //       })
+  //   },
+  //   [fetchTasks, currentFilter]
+  // )
 
   return (
     <div className="todo">
@@ -184,7 +232,11 @@ const Todo = () => {
         newTaskTitle={newTaskTitle}
         setNewTaskTitle={setNewTaskTitle}
         newTaskInputRef={newTaskInputRef}
-        addTask={addTask}
+        updateTasks={updateTasks}
+        taskCounts={taskCounts}
+        tasks={tasks}
+        setTasks={setTasks}
+        setTaskCounts={setTaskCounts}
       />
       <Menu
         currentFilter={currentFilter}
@@ -194,15 +246,17 @@ const Todo = () => {
         isDoneCount={isDoneCount}
       />
       <TodoList
-        BASE_URL={BASE_URL}
         tasks={tasks}
-        onDeleteTaskButtonClick={deleteTask}
+        setTasks={setTasks}
         editingTaskId={editingTaskId}
-        onEditTaskButtonClick={editTask}
-        onTaskCompleteChange={toggleTaskComplete}
+        setEditingTaskId={setEditingTaskId}
+        onEditTaskButtonClick={setEditingTaskId}
         onCloseTaskButtonClick={closeEdit}
-        onAdmitTaskButtonClick={admitEdit}
         newTaskInputRef={newTaskInputRef}
+        updateTasks={updateTasks}
+        taskCounts={taskCounts}
+        setTaskCounts={setTaskCounts}
+        currentFilter={currentFilter}
       />
     </div>
   )

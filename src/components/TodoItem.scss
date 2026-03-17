@@ -32,7 +32,19 @@
   }
 
   &__field-edit {
-    border: 1px solid transparent;
-    border-radius: var(--border-radius);
+  }
+
+  &.is-Disappearing {
+    opacity: 0;
+    translate: 0 -75%;
+    transition-duration: calc(var(--transition-duration) * 2);
+    pointer-events: none;
+
+    & ~ .todo-item {
+      translate: 0 calc((100% + 10px) * -1);
+      transition-delay: var(--transition-duration);
+      transition-duration: var(--transition-duration);
+      pointer-events: none;
+    }
   }
 }

@@ -5,13 +5,16 @@ import TodoItem from "./TodoItem"
 const TodoList = (props) => {
   const {
     tasks = [],
-    onDeleteTaskButtonClick,
     onEditTaskButtonClick,
     onCloseTaskButtonClick,
-    onAdmitTaskButtonClick,
-    onTaskCompleteChange,
     editingTaskId,
+    setEditingTaskId,
     newTaskInputRef,
+    updateTasks,
+    setTasks,
+    taskCounts,
+    setTaskCounts,
+    currentFilter,
   } = props
 
   if (tasks.length === 0) {
@@ -24,14 +27,18 @@ const TodoList = (props) => {
         <TodoItem
           className="todo__item"
           key={task.id}
-          onDeleteTaskButtonClick={onDeleteTaskButtonClick}
+          {...task}
           onEditTaskButtonClick={onEditTaskButtonClick}
           onCloseTaskButtonClick={onCloseTaskButtonClick}
-          onAdmitTaskButtonClick={onAdmitTaskButtonClick}
-          onTaskCompleteChange={onTaskCompleteChange}
           isEditing={editingTaskId === task.id}
+          setEditingTaskId={setEditingTaskId}
           newTaskInputRef={newTaskInputRef}
-          {...task}
+          updateTasks={updateTasks}
+          tasks={tasks}
+          setTasks={setTasks}
+          taskCounts={taskCounts}
+          setTaskCounts={setTaskCounts}
+          currentFilter={currentFilter}
         />
       ))}
     </ul>

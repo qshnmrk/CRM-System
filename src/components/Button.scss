@@ -6,7 +6,10 @@
   border-radius: var(--border-radius);
 
   &:not(:disabled) {
-    //написать потом здесь стили для ховер и актив кнопки
+    &:hover {
+      background-color: var(--color-white);
+      color: var(--color-black);
+    }
   }
 
   &:disabled {

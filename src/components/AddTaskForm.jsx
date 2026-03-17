@@ -1,51 +1,100 @@
 import { useState } from "react"
+import { todoApi } from "../api/todoApi"
+import { validateNewTaskTitle } from "../helpers/validateNewTaskTitle"
 import Button from "./Button"
 import Field from "./Field"
 
 const AddTaskForm = (props) => {
-  const { addTask, newTaskTitle, setNewTaskTitle, newTaskInputRef } =
-    props
+  const {
+    updateTasks,
+    newTaskTitle,
+    setNewTaskTitle,
+    newTaskInputRef,
+    setTasks,
+    tasks,
+    taskCounts,
+    setTaskCounts,
+  } = props
 
   const [error, setError] = useState(null)
 
-  const validateNewTaskTitle = (title) => {
-    const clearTitle = title.trim()
-    const hasOnlySpaces = title.length > 0 && clearTitle.length === 0
+  const clearNewTaskTitle = newTaskTitle.trim()
+  const isNewTaskTitleEmpty = clearNewTaskTitle.length === 0
 
-    if (hasOnlySpaces) {
-      return setError(`The task can't be empty`)
-    } else if (clearTitle.length < 2) {
-      return setError("The minimum title length is 2 characters!")
-    } else if (clearTitle.length > 64) {
-      return setError("The maximum title length is 64 characters!")
+  const validateAndSetError = (value) => {
+    const result = validateNewTaskTitle(value)
+
+    if (!result.isValid) {
+      setError(result.error)
     } else {
-      return clearTitle
+      setError(null)
     }
+
+    return result
   }
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault()
 
-    if (validateNewTaskTitle(newTaskTitle)) {
-      setError(null)
-      addTask(clearNewTaskTitle)
+    const validationResult = validateNewTaskTitle(newTaskTitle)
+    if (!validationResult.isValid) {
+      setError(validationResult.error)
+      return
+    }
+
+    const clearNewTaskTitle = validationResult.value
+    const tempId = crypto?.randomUUID?.() ?? `temp-${Date.now()}`
+
+    const optimisticTask = {
+      id: tempId,
+      title: clearNewTaskTitle,
+      isDone: false,
+    }
+
+    const originalTitle = newTaskTitle
+    const originalTasks = tasks
+    const originalCounts = taskCounts
+
+    setTasks((prevTasks) => [...prevTasks, optimisticTask])
+    setTaskCounts({
+      all: taskCounts.all + 1,
+      inWork: taskCounts.inWork + 1,
+      completed: taskCounts.completed,
+    })
+
+    setNewTaskTitle("")
+    setError(null)
+
+    if (newTaskInputRef?.current) {
+      newTaskInputRef.current.focus()
+    }
+
+    try {
+      await todoApi.addTask({
+        title: clearNewTaskTitle,
+        isDone: false,
+      })
+      await updateTasks()
+    } catch (error) {
+      console.error("Error adding task:", error)
+      setTasks(originalTasks)
+      setTaskCounts(originalCounts)
+      setNewTaskTitle(originalTitle)
+      setError("Failed to add task. Please try again.")
+      await updateTasks()
     }
   }
 
   const onInput = (event) => {
     const { value } = event.target
 
-    setError(null)
-    validateNewTaskTitle(value)
+    validateAndSetError(value)
     setNewTaskTitle(value)
   }
 
   const onBlur = () => {
     setError(null)
   }
-
-  const clearNewTaskTitle = newTaskTitle.trim()
-  const isNewTaskTitleEmpty = clearNewTaskTitle.length === 0
 
   return (
     <form

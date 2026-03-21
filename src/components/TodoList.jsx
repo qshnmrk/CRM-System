@@ -5,11 +5,8 @@ import TodoItem from "./TodoItem"
 const TodoList = (props) => {
   const {
     tasks = [],
-    onEditTaskButtonClick,
-    onCloseTaskButtonClick,
     editingTaskId,
     setEditingTaskId,
-    newTaskInputRef,
     updateTasks,
     setTasks,
     taskCounts,
@@ -28,11 +25,8 @@ const TodoList = (props) => {
           className="todo__item"
           key={task.id}
           {...task}
-          onEditTaskButtonClick={onEditTaskButtonClick}
-          onCloseTaskButtonClick={onCloseTaskButtonClick}
           isEditing={editingTaskId === task.id}
           setEditingTaskId={setEditingTaskId}
-          newTaskInputRef={newTaskInputRef}
           updateTasks={updateTasks}
           tasks={tasks}
           setTasks={setTasks}

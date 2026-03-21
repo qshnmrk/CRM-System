@@ -1,9 +1,9 @@
-import { memo, useCallback, useEffect, useState } from "react"
-import { todoApi } from "../api/todoApi"
+import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { deleteTask, updateTask } from "../api/todoApi"
 import { validateNewTaskTitle } from "../helpers/validateNewTaskTitle"
-import Button from "./Button"
+import "../pages/TodosPage.scss"
+import IconButton from "./IconButton"
 import Field from "./Field"
-import "./Todo.scss"
 import "./TodoItem.scss"
 const TodoItem = (props) => {
   const {
@@ -11,21 +11,17 @@ const TodoItem = (props) => {
     id,
     title,
     isDone,
-    onEditTaskButtonClick,
-    onCloseTaskButtonClick,
     updateTasks,
     isEditing,
-    setEditingTaskId,
-    newTaskInputRef,
     tasks,
     setTasks,
-    taskCounts,
     setTaskCounts,
-    currentFilter,
+    setEditingTaskId,
   } = props
 
   const [newTaskTitle, setNewTaskTitle] = useState(title)
   const [error, setError] = useState(null)
+  const newTaskInputRef = useRef(null)
 
   useEffect(() => {
     if (!isEditing) {
@@ -79,93 +75,36 @@ const TodoItem = (props) => {
     const originalTitle = originalTask.title
 
     if (originalTitle === newTitle) {
-      onCloseTaskButtonClick(id)
+      handleCloseClick()
       return
     }
 
-    const originalTasks = tasks
-
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, title: newTitle } : task
-      )
-    )
-
-    onCloseTaskButtonClick(id)
-
     try {
-      await todoApi.updateTask(id, {
+      await updateTask(id, {
         title: newTitle,
         isDone: isDone,
       })
 
-      onCloseTaskButtonClick(id)
+      handleCloseClick()
       await updateTasks()
     } catch (error) {
-      console.error("Error updating task:", error)
-      setTasks(originalTasks)
       setError("Failed to update task. Please try again.")
-      onEditTaskButtonClick(id)
+      handleEditClick(id)
       await updateTasks()
     }
   }
 
-  // const handleAdmitClick = async () => {
-  //   const validationResult = validateNewTaskTitle(newTaskTitle)
-
-  //   if (!validationResult.isValid) {
-  //     setError(validationResult.error)
-  //     return
-  //   }
-
-  //   onCloseTaskButtonClick(id)
-  //   startTransition(async () => {
-  //     addLocalOptimisticUpdate({ title: validationResult.value })
-
-  //     try {
-  //       await todoApi.updateTask(id, {
-  //         title: validationResult.value,
-  //         isDone: isDone,
-  //       })
-
-  //       await updateTasks()
-  //       onCloseTaskButtonClick(id)
-  //     } catch (error) {
-  //       console.error("Error updating task:", error)
-  //       setError("Failed to update task. Please try again.")
-  //     }
-  //   })
-  // }
-
   const handleCloseClick = () => {
     setNewTaskTitle(title)
     setError(null)
-    onCloseTaskButtonClick(id)
+    setEditingTaskId(null)
   }
 
   const handleDeleteClick = async () => {
-    const originalTasks = tasks
-    const originalCounts = taskCounts
-    const originalTask = tasks.find((task) => task.id === id)
-
-    setTasks((prevTasks) => {
-      return prevTasks.filter((task) => task.id !== id)
-    })
-
-    setTaskCounts({
-      all: taskCounts.all - 1,
-      inWork: taskCounts.inWork - (originalTask?.isDone ? 0 : 1),
-      completed:
-        taskCounts.completed - (originalTask?.isDone ? 1 : 0),
-    })
-
     try {
-      await todoApi.deleteTask(id)
+      await deleteTask(id)
       await updateTasks()
     } catch (error) {
-      console.error("Error deleting task:", error)
-      setTasks(originalTasks)
-      setTaskCounts(originalCounts)
       await updateTasks()
     }
   }
@@ -173,46 +112,22 @@ const TodoItem = (props) => {
   const handleToggleComplete = async (event) => {
     const newIsDone = event.target.checked
 
-    const originalTasks = tasks
-    const originalCounts = taskCounts
-
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id ? { ...task, isDone: newIsDone } : task
-      )
-
-      if (currentFilter === "isDone" && newIsDone === false) {
-        return updatedTasks.filter((task) => task.id !== id)
-      } else if (currentFilter === "inWork" && newIsDone === true) {
-        return updatedTasks.filter((task) => task.id !== id)
-      }
-
-      return updatedTasks
-    })
-
-    setTaskCounts({
-      all: taskCounts.all,
-      inWork: taskCounts.inWork + (newIsDone ? -1 : 1),
-      completed: taskCounts.completed + (newIsDone ? 1 : -1),
-    })
-
     try {
-      await todoApi.updateTask(id, {
+      await updateTask(id, {
         title: title,
         isDone: newIsDone,
       })
 
       await updateTasks()
     } catch (error) {
-      console.error("Error toggling task:", error)
       setTasks(originalTasks)
       setTaskCounts(originalCounts)
       await updateTasks()
     }
   }
 
-  const handleEditClick = () => {
-    onEditTaskButtonClick(id)
+  const handleEditClick = (todoId) => {
+    setEditingTaskId(todoId)
   }
 
   const currentTask = tasks.find((task) => task.id === id) || {
@@ -247,7 +162,7 @@ const TodoItem = (props) => {
               onBlur={onBlur}
             />
           </form>
-          <Button
+          <IconButton
             className="todo__item-button-admit"
             title="Admit"
             ariaDescription="Admit"
@@ -256,7 +171,7 @@ const TodoItem = (props) => {
             onClick={handleAdmitClick}
           />
 
-          <Button
+          <IconButton
             className="todo__item-button-close"
             title="Close"
             ariaDescription="Close"
@@ -274,15 +189,15 @@ const TodoItem = (props) => {
           >
             {displayTitle}
           </label>
-          <Button
+          <IconButton
             className="todo__item-button-edit"
             title="Edit"
             ariaDescription="Edit"
             id={id}
             iconType="edit"
-            onClick={handleEditClick}
+            onClick={() => handleEditClick(id)}
           />
-          <Button
+          <IconButton
             className="todo__item-button-delete"
             title="Delete"
             ariaDescription="Delete"

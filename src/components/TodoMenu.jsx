@@ -1,9 +1,9 @@
 import { memo } from "react"
-const Menu = (props) => {
+const TodoMenu = (props) => {
   const {
-    totalCount,
-    inWorkCount,
-    isDoneCount,
+    todosAllCount,
+    todosInWorkCount,
+    todosCompletedCount,
     currentFilter,
     onFilterChange,
   } = props
@@ -18,7 +18,7 @@ const Menu = (props) => {
             onClick={() => onFilterChange("all")}
             tabIndex={0}
           >
-            All ({totalCount})
+            All ({todosAllCount})
           </a>
         </li>
         <li className="todo__menu-item">
@@ -28,21 +28,21 @@ const Menu = (props) => {
             onClick={() => onFilterChange("inWork")}
             tabIndex={0}
           >
-            In Work ({inWorkCount})
+            In Work ({todosInWorkCount})
           </a>
         </li>
         <li className="todo__menu-item">
           <a
-            className={`todo__menu-link ${currentFilter === "isDone" ? "is-active" : ""}`}
+            className={`todo__menu-link ${currentFilter === "completed" ? "is-active" : ""}`}
             aria-description='Show Section "Done"'
-            onClick={() => onFilterChange("isDone")}
+            onClick={() => onFilterChange("completed")}
             tabIndex={0}
           >
-            Done ({isDoneCount})
+            Done ({todosCompletedCount})
           </a>
         </li>
       </ul>
     </nav>
   )
 }
-export default memo(Menu)
+export default memo(TodoMenu)

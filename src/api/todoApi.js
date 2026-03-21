@@ -1,53 +1,33 @@
 const BASE_URL = "https://easydev.club/api/v1"
 
-const checkResponse = async (response) => {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(
-      errorData.message || `HTTP error! status: ${response.status}`
-    )
+export const getAllTasks = (filter) => {
+  let url = `${BASE_URL}/todos`
+  if (filter) {
+    url = `${url}?filter=${filter}`
   }
 
-  const contentType = response.headers.get("content-type")
-  if (contentType && contentType.includes("application/json")) {
-    return response.json()
-  }
-
-  return { success: true }
+  return fetch(url).then((response) => response.json())
 }
 
-export const todoApi = {
-  getAllTasks: (filter) => {
-    let url = `${BASE_URL}/todos`
-    if (filter === "inWork") {
-      url = `${BASE_URL}/todos?filter=inWork`
-    } else if (filter === "isDone") {
-      url = `${BASE_URL}/todos?filter=completed`
-    }
+export const addTask = (data) =>
+  fetch(`${BASE_URL}/todos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }).then()
 
-    return fetch(url).then(checkResponse)
-  },
+export const updateTask = (taskId, data) =>
+  fetch(`${BASE_URL}/todos/${taskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }).then()
 
-  addTask: (data) =>
-    fetch(`${BASE_URL}/todos`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then(checkResponse),
-
-  updateTask: (taskId, data) =>
-    fetch(`${BASE_URL}/todos/${taskId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then(checkResponse),
-
-  deleteTask: (taskId) =>
-    fetch(`${BASE_URL}/todos/${taskId}`, {
-      method: "DELETE",
-    }).then(checkResponse),
-}
+export const deleteTask = (taskId) =>
+  fetch(`${BASE_URL}/todos/${taskId}`, {
+    method: "DELETE",
+  }).then()

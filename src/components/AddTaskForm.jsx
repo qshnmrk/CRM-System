@@ -1,25 +1,24 @@
-import { useState } from "react"
-import { todoApi } from "../api/todoApi"
+import { useEffect, useRef, useState } from "react"
+import { addTask } from "../api/todoApi"
 import { validateNewTaskTitle } from "../helpers/validateNewTaskTitle"
 import Button from "./Button"
 import Field from "./Field"
 
 const AddTaskForm = (props) => {
-  const {
-    updateTasks,
-    newTaskTitle,
-    setNewTaskTitle,
-    newTaskInputRef,
-    setTasks,
-    tasks,
-    taskCounts,
-    setTaskCounts,
-  } = props
+  const { updateTasks } = props
 
   const [error, setError] = useState(null)
+  const [newTaskTitle, setNewTaskTitle] = useState("")
+  const newTaskInputRef = useRef(null)
 
   const clearNewTaskTitle = newTaskTitle.trim()
   const isNewTaskTitleEmpty = clearNewTaskTitle.length === 0
+
+  useEffect(() => {
+    if (newTaskInputRef?.current) {
+      newTaskInputRef.current.focus()
+    }
+  }, [])
 
   const validateAndSetError = (value) => {
     const result = validateNewTaskTitle(value)
@@ -42,44 +41,17 @@ const AddTaskForm = (props) => {
       return
     }
 
-    const clearNewTaskTitle = validationResult.value
-    const tempId = crypto?.randomUUID?.() ?? `temp-${Date.now()}`
-
-    const optimisticTask = {
-      id: tempId,
-      title: clearNewTaskTitle,
-      isDone: false,
-    }
-
-    const originalTitle = newTaskTitle
-    const originalTasks = tasks
-    const originalCounts = taskCounts
-
-    setTasks((prevTasks) => [...prevTasks, optimisticTask])
-    setTaskCounts({
-      all: taskCounts.all + 1,
-      inWork: taskCounts.inWork + 1,
-      completed: taskCounts.completed,
-    })
-
-    setNewTaskTitle("")
-    setError(null)
-
-    if (newTaskInputRef?.current) {
-      newTaskInputRef.current.focus()
-    }
-
     try {
-      await todoApi.addTask({
-        title: clearNewTaskTitle,
+      await addTask({
+        title: validationResult.value,
         isDone: false,
       })
       await updateTasks()
+      setNewTaskTitle("")
+      if (newTaskInputRef?.current) {
+        newTaskInputRef.current.focus()
+      }
     } catch (error) {
-      console.error("Error adding task:", error)
-      setTasks(originalTasks)
-      setTaskCounts(originalCounts)
-      setNewTaskTitle(originalTitle)
       setError("Failed to add task. Please try again.")
       await updateTasks()
     }

@@ -9,22 +9,22 @@ export const getAllTodos = (filter) => {
   return fetch(url).then((response) => response.json())
 }
 
-export const addTodo = (data) =>
+export const addTodo = (todoTitle) =>
   fetch(`${BASE_URL}/todos`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(todoTitle),
   }).then()
 
-export const updateTodo = (todoId, data) =>
+export const updateTodo = (todoId, newTodoTitle) =>
   fetch(`${BASE_URL}/todos/${todoId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(newTodoTitle),
   }).then()
 
 export const deleteTodo = (todoId) =>

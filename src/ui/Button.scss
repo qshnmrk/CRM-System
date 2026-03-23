@@ -1,0 +1,19 @@
+.button {
+  height: 50px;
+  color: var(--color-on-button);
+  background-color: var(--color-primary-700);
+  font-weight: bold;
+  border: var(--border);
+  border-radius: var(--border-radius);
+
+  &:not(:disabled) {
+    &:hover {
+      background-color: var(--color-primary-400);
+    }
+  }
+
+  &:disabled {
+    background-color: var(--color-disabled);
+    cursor: not-allowed;
+  }
+}

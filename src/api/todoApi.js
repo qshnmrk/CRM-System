@@ -1,6 +1,6 @@
 const BASE_URL = "https://easydev.club/api/v1"
 
-export const getAllTasks = (filter) => {
+export const getAllTodos = (filter) => {
   let url = `${BASE_URL}/todos`
   if (filter) {
     url = `${url}?filter=${filter}`
@@ -9,7 +9,7 @@ export const getAllTasks = (filter) => {
   return fetch(url).then((response) => response.json())
 }
 
-export const addTask = (data) =>
+export const addTodo = (data) =>
   fetch(`${BASE_URL}/todos`, {
     method: "POST",
     headers: {
@@ -18,8 +18,8 @@ export const addTask = (data) =>
     body: JSON.stringify(data),
   }).then()
 
-export const updateTask = (taskId, data) =>
-  fetch(`${BASE_URL}/todos/${taskId}`, {
+export const updateTodo = (todoId, data) =>
+  fetch(`${BASE_URL}/todos/${todoId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const updateTask = (taskId, data) =>
     body: JSON.stringify(data),
   }).then()
 
-export const deleteTask = (taskId) =>
-  fetch(`${BASE_URL}/todos/${taskId}`, {
+export const deleteTodo = (todoId) =>
+  fetch(`${BASE_URL}/todos/${todoId}`, {
     method: "DELETE",
   }).then()

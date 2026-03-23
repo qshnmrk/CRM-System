@@ -6,7 +6,7 @@ body {
   padding: 100px 30px;
   font-family: "Montserrat", sans-serif;
   color: var(--color-black);
-  background-color: var(--color-white);
+  background-color: var(--color-background);
 }
 
 input,

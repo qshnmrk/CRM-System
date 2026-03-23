@@ -1,4 +1,7 @@
 .todo-item {
+  background-color: var(--color-surface);
+  box-shadow: 2px 2px var(--color-shadow);
+
   &__checkbox {
     appearance: none;
     width: 20px;
@@ -7,12 +10,14 @@
     align-self: center;
     border: var(--border);
     border-radius: var(--border-radius);
+    border-color: var(--color-disabled);
     cursor: pointer;
 
     &:checked {
-      background: var(--color-black) url("../assets/icons/check.svg")
-        no-repeat center / contain;
+      background: var(--color-primary-700)
+        url("../assets/icons/check.svg") no-repeat center / contain;
       color: var(--color-white);
+      border-color: none;
     }
   }
 
@@ -23,12 +28,17 @@
     min-height: 50px;
     display: flex;
     align-items: center;
-    color: var(--color-black);
+    color: var(--color-on-surface);
     border: 1px solid transparent;
     border-radius: var(--border-radius);
     overflow: hidden;
     text-wrap: wrap;
     word-break: break-word;
+
+    &.completed {
+      text-decoration: line-through;
+      color: var(--color-disabled);
+    }
   }
 
   &__field-edit {

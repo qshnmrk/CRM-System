@@ -4,34 +4,34 @@ import TodoItem from "./TodoItem"
 
 const TodoList = (props) => {
   const {
-    tasks = [],
-    editingTaskId,
-    setEditingTaskId,
-    updateTasks,
-    setTasks,
-    taskCounts,
-    setTaskCounts,
+    todos = [],
+    editingTodoId,
+    setEditingTodoId,
+    updateTodos,
+    setTodos,
+    todoCounts,
+    setTodoCounts,
     currentFilter,
   } = props
 
-  if (tasks.length === 0) {
+  if (todos.length === 0) {
     return <TodoEmpty />
   }
 
   return (
     <ul className="todo__list">
-      {tasks.map((task) => (
+      {todos.map((todo) => (
         <TodoItem
           className="todo__item"
-          key={task.id}
-          {...task}
-          isEditing={editingTaskId === task.id}
-          setEditingTaskId={setEditingTaskId}
-          updateTasks={updateTasks}
-          tasks={tasks}
-          setTasks={setTasks}
-          taskCounts={taskCounts}
-          setTaskCounts={setTaskCounts}
+          key={todo.id}
+          {...todo}
+          isEditing={editingTodoId === todo.id}
+          setEditingTodoId={setEditingTodoId}
+          updateTodos={updateTodos}
+          todos={todos}
+          setTodos={setTodos}
+          todoCounts={todoCounts}
+          setTodoCounts={setTodoCounts}
           currentFilter={currentFilter}
         />
       ))}

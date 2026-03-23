@@ -1,79 +1,78 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react"
-import { getAllTasks } from "../api/todoApi"
-import AddTaskForm from "../components/AddTaskForm"
+import { getAllTodos } from "../api/todoApi"
+import AddTodoForm from "../components/AddTodoForm"
 import TodoList from "../components/TodoList"
 import TodoMenu from "../components/TodoMenu"
 import "./TodosPage.scss"
 
 const TodosPage = () => {
-  const [tasks, setTasks] = useState([])
+  const [todos, setTodos] = useState([])
 
-  const [editingTaskId, setEditingTaskId] = useState(null)
-  const [taskCounts, setTaskCounts] = useState({
+  const [editingTodoId, setEditingTodoId] = useState(null)
+  const [todoCounts, setTodoCounts] = useState({
     all: 0,
     inWork: 0,
     completed: 0,
   })
 
-  const newTaskInputRef = useRef(null)
+  const newTodoInputRef = useRef(null)
   const [currentFilter, setCurrentFilter] = useState("all")
 
-  const updateTasks = useCallback(async () => {
+  const updateTodos = useCallback(async () => {
     try {
-      const response = await getAllTasks(currentFilter)
+      const response = await getAllTodos(currentFilter)
 
-      setTasks(response.data)
+      setTodos(response.data)
 
       if (response?.info) {
-        setTaskCounts({
+        setTodoCounts({
           all: response.info.all || 0,
           inWork: response.info.inWork || 0,
           completed: response.info.completed || 0,
         })
       }
     } catch (error) {
-      console.error("Error fetching tasks, error")
-      setTasks([])
+      setTodos([])
     }
   }, [currentFilter])
 
   const handleFilterChange = (filter) => {
-    setEditingTaskId(null)
+    setEditingTodoId(null)
     setCurrentFilter(filter)
-    if (newTaskInputRef?.current) {
-      newTaskInputRef.current.focus()
+    if (newTodoInputRef?.current) {
+      newTodoInputRef.current.focus()
     }
   }
 
   useEffect(() => {
-    updateTasks()
-  }, [updateTasks])
+    updateTodos()
+  }, [updateTodos])
 
   return (
     <div className="todo">
-      <h1 className="todo__title">To Do List</h1>
-      <AddTaskForm
-        updateTasks={updateTasks}
-        taskCounts={taskCounts}
-        tasks={tasks}
-        setTasks={setTasks}
-        setTaskCounts={setTaskCounts}
+      <h1 className="todo__title">Список задач</h1>
+      <AddTodoForm
+        updateTodos={updateTodos}
+        todoCounts={todoCounts}
+        todos={todos}
+        setTodos={setTodos}
+        setTodoCounts={setTodoCounts}
       />
       <TodoMenu
         currentFilter={currentFilter}
         onFilterChange={handleFilterChange}
-        todosAllCount={taskCounts.all}
-        todosInWorkCount={taskCounts.inWork}
-        todosCompletedCount={taskCounts.completed}
+        todosAllCount={todoCounts.all}
+        todosInWorkCount={todoCounts.inWork}
+        todosCompletedCount={todoCounts.completed}
       />
       <TodoList
-        tasks={tasks}
-        setTasks={setTasks}
-        editingTaskId={editingTaskId}
-        setEditingTaskId={setEditingTaskId}
-        updateTasks={updateTasks}
-        taskCounts={taskCounts}
-        setTaskCounts={setTaskCounts}
+        todos={todos}
+        setTodos={setTodos}
+        editingTodoId={editingTodoId}
+        setEditingTodoId={setEditingTodoId}
+        updateTodos={updateTodos}
+        todoCounts={todoCounts}
+        setTodoCounts={setTodoCounts}
         currentFilter={currentFilter}
       />
     </div>

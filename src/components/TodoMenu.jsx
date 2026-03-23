@@ -12,34 +12,34 @@ const TodoMenu = (props) => {
     <nav className="todo__menu">
       <ul className="todo__menu-list">
         <li className="todo__menu-item">
-          <a
+          <button
             className={`todo__menu-link ${currentFilter === "all" ? "is-active" : ""}`}
-            aria-description='Show Section "All"'
+            aria-description='Показать раздел "Все"'
             onClick={() => onFilterChange("all")}
             tabIndex={0}
           >
-            All ({todosAllCount})
-          </a>
+            Все ({todosAllCount})
+          </button>
         </li>
         <li className="todo__menu-item">
-          <a
+          <button
             className={`todo__menu-link ${currentFilter === "inWork" ? "is-active" : ""}`}
-            aria-description='Show Section "In Work"'
+            aria-description='Показать раздел "В работе"'
             onClick={() => onFilterChange("inWork")}
             tabIndex={0}
           >
-            In Work ({todosInWorkCount})
-          </a>
+            В работе ({todosInWorkCount})
+          </button>
         </li>
         <li className="todo__menu-item">
-          <a
+          <button
             className={`todo__menu-link ${currentFilter === "completed" ? "is-active" : ""}`}
-            aria-description='Show Section "Done"'
+            aria-description='Показать раздел "Сделано"'
             onClick={() => onFilterChange("completed")}
             tabIndex={0}
           >
-            Done ({todosCompletedCount})
-          </a>
+            Сделано ({todosCompletedCount})
+          </button>
         </li>
       </ul>
     </nav>

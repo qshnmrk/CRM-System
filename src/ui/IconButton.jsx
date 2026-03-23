@@ -53,7 +53,7 @@ const IconButton = (props) => {
       disabled={isDisabled}
     >
       <svg
-        className="todo__item-icon"
+        className="icon-button__icon"
         fill="currentColor"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"

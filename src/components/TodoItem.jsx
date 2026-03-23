@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react"
-import { deleteTask, updateTask } from "../api/todoApi"
-import { validateNewTaskTitle } from "../helpers/validateNewTaskTitle"
+import { deleteTodo, updateTodo } from "../api/todoApi"
+import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle"
 import "../pages/TodosPage.scss"
-import IconButton from "./IconButton"
-import Field from "./Field"
+import Field from "../ui/Field"
+import IconButton from "../ui/IconButton"
 import "./TodoItem.scss"
 const TodoItem = (props) => {
   const {
@@ -11,27 +11,29 @@ const TodoItem = (props) => {
     id,
     title,
     isDone,
-    updateTasks,
+    updateTodos,
     isEditing,
-    tasks,
-    setTasks,
-    setTaskCounts,
-    setEditingTaskId,
+    todos,
+    setTodos,
+    setTodoCounts,
+    setEditingTodoId,
   } = props
 
-  const [newTaskTitle, setNewTaskTitle] = useState(title)
+  const [newTodoTitle, setNewTodoTitle] = useState(title)
   const [error, setError] = useState(null)
-  const newTaskInputRef = useRef(null)
+  const newTodoInputRef = useRef(null)
 
   useEffect(() => {
     if (!isEditing) {
-      setNewTaskTitle(title)
+      setNewTodoTitle(title)
       setError(null)
+    } else if (isEditing && newTodoInputRef?.current) {
+      newTodoInputRef.current.focus()
     }
   }, [title, isEditing])
 
   const validateAndSetError = (value) => {
-    const result = validateNewTaskTitle(value)
+    const result = validateNewTodoTitle(value)
 
     if (!result.isValid) {
       setError(result.error)
@@ -46,7 +48,7 @@ const TodoItem = (props) => {
     const { value } = event.target
 
     validateAndSetError(value)
-    setNewTaskTitle(value)
+    setNewTodoTitle(value)
   }
 
   const onBlur = () => {
@@ -59,11 +61,11 @@ const TodoItem = (props) => {
 
       handleAdmitClick()
     },
-    [newTaskTitle]
+    [newTodoTitle]
   )
 
   const handleAdmitClick = async () => {
-    const validationResult = validateNewTaskTitle(newTaskTitle)
+    const validationResult = validateNewTodoTitle(newTodoTitle)
 
     if (!validationResult.isValid) {
       setError(validationResult.error)
@@ -71,8 +73,8 @@ const TodoItem = (props) => {
     }
 
     const newTitle = validationResult.value
-    const originalTask = tasks.find((task) => task.id === id)
-    const originalTitle = originalTask.title
+    const originalTodo = todos.find((todo) => todo.id === id)
+    const originalTitle = originalTodo.title
 
     if (originalTitle === newTitle) {
       handleCloseClick()
@@ -80,32 +82,34 @@ const TodoItem = (props) => {
     }
 
     try {
-      await updateTask(id, {
+      await updateTodo(id, {
         title: newTitle,
         isDone: isDone,
       })
 
       handleCloseClick()
-      await updateTasks()
+      await updateTodos()
     } catch (error) {
-      setError("Failed to update task. Please try again.")
+      setError(
+        "Не удалось отредактировать задачу. Пожалуйста, попробуйте снова."
+      )
       handleEditClick(id)
-      await updateTasks()
+      await updateTodos()
     }
   }
 
   const handleCloseClick = () => {
-    setNewTaskTitle(title)
+    setNewTodoTitle(title)
     setError(null)
-    setEditingTaskId(null)
+    setEditingTodoId(null)
   }
 
   const handleDeleteClick = async () => {
     try {
-      await deleteTask(id)
-      await updateTasks()
+      await deleteTodo(id)
+      await updateTodos()
     } catch (error) {
-      await updateTasks()
+      await updateTodos()
     }
   }
 
@@ -113,29 +117,29 @@ const TodoItem = (props) => {
     const newIsDone = event.target.checked
 
     try {
-      await updateTask(id, {
+      await updateTodo(id, {
         title: title,
         isDone: newIsDone,
       })
 
-      await updateTasks()
+      await updateTodos()
     } catch (error) {
-      setTasks(originalTasks)
-      setTaskCounts(originalCounts)
-      await updateTasks()
+      setTodos(originalTodos)
+      setTodoCounts(originalCounts)
+      await updateTodos()
     }
   }
 
   const handleEditClick = (todoId) => {
-    setEditingTaskId(todoId)
+    setEditingTodoId(todoId)
   }
 
-  const currentTask = tasks.find((task) => task.id === id) || {
+  const currentTodo = todos.find((todo) => todo.id === id) || {
     title,
     isDone,
   }
-  const displayTitle = currentTask.title
-  const displayIsDone = currentTask.isDone
+  const displayTitle = currentTodo.title
+  const displayIsDone = currentTodo.isDone
 
   return (
     <li className={`todo-item ${className}`}>
@@ -154,27 +158,27 @@ const TodoItem = (props) => {
           >
             <Field
               className="todo-item__field-edit"
-              placeholder="Task to be edited..."
-              value={newTaskTitle}
+              placeholder="Редактирование задачи..."
+              value={newTodoTitle}
               onInput={onInput}
-              ref={newTaskInputRef}
+              ref={newTodoInputRef}
               error={error}
               onBlur={onBlur}
             />
           </form>
           <IconButton
-            className="todo__item-button-admit"
-            title="Admit"
-            ariaDescription="Admit"
+            className="primary"
+            title="Подтвердить"
+            ariaDescription="Подтвердить"
             id={id}
             iconType="admit"
             onClick={handleAdmitClick}
           />
 
           <IconButton
-            className="todo__item-button-close"
-            title="Close"
-            ariaDescription="Close"
+            className="secondary"
+            title="Закрыть"
+            ariaDescription="Закрыть"
             id={id}
             iconType="close"
             onClick={handleCloseClick}
@@ -183,24 +187,24 @@ const TodoItem = (props) => {
       ) : (
         <>
           <label
-            className="todo-item__label"
+            className={`todo-item__label ${displayIsDone ? "completed" : ""}`}
             htmlFor={id}
             tabIndex={0}
           >
             {displayTitle}
           </label>
           <IconButton
-            className="todo__item-button-edit"
-            title="Edit"
-            ariaDescription="Edit"
+            className="primary"
+            title="Редактировать"
+            ariaDescription="Редактировать"
             id={id}
             iconType="edit"
             onClick={() => handleEditClick(id)}
           />
           <IconButton
-            className="todo__item-button-delete"
-            title="Delete"
-            ariaDescription="Delete"
+            className="secondary"
+            title="Удалить"
+            ariaDescription="Удалить"
             id={id}
             iconType="delete"
             onClick={handleDeleteClick}

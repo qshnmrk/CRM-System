@@ -8,6 +8,7 @@ const Field = (props) => {
     type = "text",
     value,
     onInput,
+    onBlur,
     ref,
     error,
   } = props
@@ -27,6 +28,7 @@ const Field = (props) => {
         placeholder={placeholder}
         value={value}
         onInput={onInput}
+        onBlur={onBlur}
         ref={ref}
       />
       {error && <span className="field__error">{error}</span>}

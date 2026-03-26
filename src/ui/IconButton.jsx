@@ -1,4 +1,4 @@
-import "./Button.scss"
+import "./IconButton.scss"
 
 const ICONS = {
   admit: {
@@ -32,11 +32,10 @@ const ICONS = {
   },
 }
 
-const Button = (props) => {
+const IconButton = (props) => {
   const {
     className,
     type = "button",
-    children,
     iconType,
     title,
     ariaDescription,
@@ -46,27 +45,23 @@ const Button = (props) => {
 
   return (
     <button
-      className={`button ${className}`}
+      className={`icon-button ${className}`}
       type={type}
       title={title}
       aria-description={ariaDescription}
       onClick={onClick}
       disabled={isDisabled}
     >
-      {iconType ? (
-        <svg
-          className="todo__item-icon"
-          fill="#ffffff"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {ICONS[iconType].element}
-        </svg>
-      ) : (
-        children
-      )}
+      <svg
+        className="icon-button__icon"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {ICONS[iconType].element}
+      </svg>
     </button>
   )
 }
 
-export default Button
+export default IconButton

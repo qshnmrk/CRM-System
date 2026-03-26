@@ -24,7 +24,7 @@ const TodoEmpty = () => {
           r="1"
         />
       </svg>
-      <p className="todo__empty-message">There is no tasks yet :(</p>
+      <p className="todo__empty-message">Задач пока что нет :(</p>
     </div>
   )
 }

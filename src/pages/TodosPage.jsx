@@ -51,13 +51,7 @@ const TodosPage = () => {
   return (
     <div className="todo">
       <h1 className="todo__title">Список задач</h1>
-      <AddTodoForm
-        updateTodos={updateTodos}
-        todoCounts={todoCounts}
-        todos={todos}
-        setTodos={setTodos}
-        setTodoCounts={setTodoCounts}
-      />
+      <AddTodoForm updateTodos={updateTodos} />
       <TodoMenu
         currentFilter={currentFilter}
         onFilterChange={handleFilterChange}
@@ -71,9 +65,7 @@ const TodosPage = () => {
         editingTodoId={editingTodoId}
         setEditingTodoId={setEditingTodoId}
         updateTodos={updateTodos}
-        todoCounts={todoCounts}
         setTodoCounts={setTodoCounts}
-        currentFilter={currentFilter}
       />
     </div>
   )

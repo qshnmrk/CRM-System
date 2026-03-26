@@ -124,8 +124,6 @@ const TodoItem = (props) => {
 
       await updateTodos()
     } catch (error) {
-      setTodos(originalTodos)
-      setTodoCounts(originalCounts)
       await updateTodos()
     }
   }

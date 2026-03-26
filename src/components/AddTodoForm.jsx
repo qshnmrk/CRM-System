@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { addTodo } from "../api/todoApi"
 import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle"
 import Button from "../ui/Button"
@@ -13,12 +13,6 @@ const AddTodoForm = (props) => {
 
   const clearNewTodoTitle = newTodoTitle.trim()
   const isNewTodoTitleEmpty = clearNewTodoTitle.length === 0
-
-  useEffect(() => {
-    if (newTodoInputRef?.current) {
-      newTodoInputRef.current.focus()
-    }
-  }, [])
 
   const validateAndSetError = (value) => {
     const result = validateNewTodoTitle(value)
@@ -87,7 +81,6 @@ const AddTodoForm = (props) => {
         onBlur={onBlur}
       />
       <Button
-        className="todo__button-add"
         type="submit"
         isDisabled={isNewTodoTitleEmpty}
       >

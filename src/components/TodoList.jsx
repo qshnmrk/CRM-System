@@ -9,9 +9,7 @@ const TodoList = (props) => {
     setEditingTodoId,
     updateTodos,
     setTodos,
-    todoCounts,
     setTodoCounts,
-    currentFilter,
   } = props
 
   if (todos.length === 0) {
@@ -30,9 +28,7 @@ const TodoList = (props) => {
           updateTodos={updateTodos}
           todos={todos}
           setTodos={setTodos}
-          todoCounts={todoCounts}
           setTodoCounts={setTodoCounts}
-          currentFilter={currentFilter}
         />
       ))}
     </ul>

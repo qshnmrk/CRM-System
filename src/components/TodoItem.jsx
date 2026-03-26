@@ -14,8 +14,6 @@ const TodoItem = (props) => {
     updateTodos,
     isEditing,
     todos,
-    setTodos,
-    setTodoCounts,
     setEditingTodoId,
   } = props
 

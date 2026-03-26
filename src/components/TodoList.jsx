@@ -8,8 +8,6 @@ const TodoList = (props) => {
     editingTodoId,
     setEditingTodoId,
     updateTodos,
-    setTodos,
-    setTodoCounts,
   } = props
 
   if (todos.length === 0) {
@@ -27,8 +25,6 @@ const TodoList = (props) => {
           setEditingTodoId={setEditingTodoId}
           updateTodos={updateTodos}
           todos={todos}
-          setTodos={setTodos}
-          setTodoCounts={setTodoCounts}
         />
       ))}
     </ul>

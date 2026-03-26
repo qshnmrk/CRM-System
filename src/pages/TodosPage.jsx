@@ -61,11 +61,9 @@ const TodosPage = () => {
       />
       <TodoList
         todos={todos}
-        setTodos={setTodos}
         editingTodoId={editingTodoId}
         setEditingTodoId={setEditingTodoId}
         updateTodos={updateTodos}
-        setTodoCounts={setTodoCounts}
       />
     </div>
   )

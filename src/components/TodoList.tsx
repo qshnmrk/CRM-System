@@ -1,15 +1,20 @@
 import { memo } from "react"
-import TodoEmpty from "./TodoEmpty"
-import TodoItem from "./TodoItem"
+import { type Todo } from "../types/todo.js"
+import TodoEmpty from "./TodoEmpty.tsx"
+import TodoItem from "./TodoItem.tsx"
 
-const TodoList = (props) => {
-  const {
-    todos = [],
-    editingTodoId,
-    setEditingTodoId,
-    updateTodos,
-  } = props
-
+interface TodoListProps {
+  todos: Todo[]
+  editingTodoId: number | null
+  setEditingTodoId: (id: number | null) => void
+  updateTodos: () => void
+}
+const TodoList = ({
+  todos,
+  editingTodoId,
+  setEditingTodoId,
+  updateTodos,
+}: TodoListProps) => {
   if (todos.length === 0) {
     return <TodoEmpty />
   }

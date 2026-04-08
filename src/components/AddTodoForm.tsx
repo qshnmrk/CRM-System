@@ -1,24 +1,27 @@
 import { useRef, useState } from "react"
-import { addTodo } from "../api/todoApi"
-import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle"
-import Button from "../ui/Button"
-import Field from "../ui/Field"
+import { addTodo } from "../api/todoApi.js"
+import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle.js"
+import type { ValidationResult } from "../types/todo.ts"
+import Button from "../ui/Button.tsx"
+import Field from "../ui/Field.tsx"
 
-const AddTodoForm = (props) => {
-  const { updateTodos } = props
+interface AddTodoFormProps {
+  updateTodos: () => void
+}
 
-  const [error, setError] = useState(null)
+const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
+  const [error, setError] = useState<string | null>(null)
   const [newTodoTitle, setNewTodoTitle] = useState("")
-  const newTodoInputRef = useRef(null)
+  const newTodoInputRef = useRef<HTMLInputElement>(null)
 
   const clearNewTodoTitle = newTodoTitle.trim()
   const isNewTodoTitleEmpty = clearNewTodoTitle.length === 0
 
-  const validateAndSetError = (value) => {
+  const validateAndSetError = (value: string): ValidationResult => {
     const result = validateNewTodoTitle(value)
 
     if (!result.isValid) {
-      setError(result.error)
+      setError(result.error || null)
     } else {
       setError(null)
     }
@@ -26,19 +29,21 @@ const AddTodoForm = (props) => {
     return result
   }
 
-  const onSubmit = async (event) => {
+  const onSubmit = async (
+    event: React.SubmitEvent<HTMLFormElement>
+  ) => {
     event.preventDefault()
 
     const validationResult = validateNewTodoTitle(newTodoTitle)
     if (!validationResult.isValid) {
-      setError(validationResult.error)
+      setError(validationResult.error || null)
       return
     }
 
     try {
       await addTodo({
         title: validationResult.value,
-        isDone: false,
+        completed: false,
       })
       await updateTodos()
       setNewTodoTitle("")
@@ -53,8 +58,8 @@ const AddTodoForm = (props) => {
     }
   }
 
-  const onInput = (event) => {
-    const { value } = event.target
+  const onInput = (event: React.InputEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget
 
     validateAndSetError(value)
     setNewTodoTitle(value)

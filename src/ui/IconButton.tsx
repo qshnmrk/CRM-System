@@ -32,17 +32,27 @@ const ICONS = {
   },
 }
 
-const IconButton = (props) => {
-  const {
-    className,
-    type = "button",
-    iconType,
-    title,
-    ariaDescription,
-    onClick,
-    isDisabled,
-  } = props
+type IconType = keyof typeof ICONS
 
+interface IconButtonProps {
+  className: "primary" | "secondary"
+  type?: "button"
+  iconType: IconType
+  title?: string
+  ariaDescription?: string
+  onClick?: () => void
+  isDisabled?: boolean
+}
+
+const IconButton = ({
+  className,
+  type = "button",
+  iconType,
+  title,
+  ariaDescription,
+  onClick,
+  isDisabled,
+}: IconButtonProps) => {
   return (
     <button
       className={`icon-button ${className}`}

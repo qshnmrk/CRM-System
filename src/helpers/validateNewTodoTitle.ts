@@ -1,8 +1,13 @@
-export const validateNewTodoTitle = (title) => {
+import type { ValidationResult } from "../types/todo.ts"
+
+export const validateNewTodoTitle = (
+  title: string
+): ValidationResult => {
   const clearTitle = title.trim()
-  const hasOnlySpaces = title.length > 0 && clearTitle.length === 0
-  const shortTitle = clearTitle.length < 2
-  const longTitle = clearTitle.length > 64
+  const hasOnlySpaces: boolean =
+    title.length > 0 && clearTitle.length === 0
+  const shortTitle: boolean = clearTitle.length < 2
+  const longTitle: boolean = clearTitle.length > 64
 
   if (hasOnlySpaces) {
     return {

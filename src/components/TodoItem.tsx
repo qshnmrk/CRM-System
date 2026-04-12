@@ -93,6 +93,10 @@ const TodoItem = ({
       return
     }
 
+    if (!newTitle) {
+      return
+    }
+
     try {
       await updateTodo(id, {
         title: newTitle,

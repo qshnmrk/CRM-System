@@ -11,13 +11,13 @@ export const getAllTodos = (filter: FilterType) => {
   return fetch(url).then((response) => response.json())
 }
 
-export const addTodo = (todoTitle: string) =>
+export const addTodo = (todo: { title: string; isDone: boolean }) =>
   fetch(`${BASE_URL}/todos`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(todoTitle),
+    body: JSON.stringify(todo),
   }).then()
 
 export const updateTodo = (

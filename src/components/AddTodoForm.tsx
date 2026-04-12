@@ -40,10 +40,15 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
       return
     }
 
+    if (!validationResult.value) {
+      setError("Некорректный заголовок задачи")
+      return
+    }
+
     try {
       await addTodo({
         title: validationResult.value,
-        completed: false,
+        isDone: false,
       })
       await updateTodos()
       setNewTodoTitle("")

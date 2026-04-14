@@ -1,38 +1,29 @@
-import type { FilterType } from "../types/todo.ts"
+import axios from "axios"
+import type { FilterType, Todo } from "../types/todo.ts"
 
 const BASE_URL = "https://easydev.club/api/v1"
 
-export const getAllTodos = (filter: FilterType) => {
+export const getAllTodos = (filter: FilterType): Promise<Todo[]> => {
   let url = `${BASE_URL}/todos`
   if (filter) {
     url = `${url}?filter=${filter}`
   }
 
-  return fetch(url).then((response) => response.json())
+  return axios.get(url).then((response) => response.data)
 }
 
-export const addTodo = (todo: { title: string; isDone: boolean }) =>
-  fetch(`${BASE_URL}/todos`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(todo),
-  }).then()
+export const addTodo = (todo: Omit<Todo, "id">): Promise<Todo> =>
+  axios
+    .post(`${BASE_URL}/todos`, todo)
+    .then((response) => response.data)
 
 export const updateTodo = (
   todoId: number,
-  todo: { title: string; isDone: boolean }
-) =>
-  fetch(`${BASE_URL}/todos/${todoId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(todo),
-  }).then()
+  todo: Partial<Omit<Todo, "id">>
+): Promise<Todo> =>
+  axios
+    .put(`${BASE_URL}/todos/${todoId}`, todo)
+    .then((response) => response.data)
 
-export const deleteTodo = (todoId: number) =>
-  fetch(`${BASE_URL}/todos/${todoId}`, {
-    method: "DELETE",
-  }).then()
+export const deleteTodo = (todoId: number): Promise<void> =>
+  axios.delete(`${BASE_URL}/todos/${todoId}`).then(() => undefined)

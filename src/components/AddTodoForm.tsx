@@ -1,102 +1,99 @@
-import { useRef, useState } from "react"
+import { App, Button, Form, Input } from "antd"
 import { addTodo } from "../api/todoApi.js"
-import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle.js"
-import type { ValidationResult } from "../types/todo.ts"
-import Button from "../ui/Button.tsx"
-import Field from "../ui/Field.tsx"
 
 interface AddTodoFormProps {
   updateTodos: () => void
 }
 
 const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
-  const [error, setError] = useState<string | null>(null)
-  const [newTodoTitle, setNewTodoTitle] = useState("")
-  const newTodoInputRef = useRef<HTMLInputElement>(null)
+  const [form] = Form.useForm()
+  const { message } = App.useApp()
 
-  const clearNewTodoTitle = newTodoTitle.trim()
-  const isNewTodoTitleEmpty = clearNewTodoTitle.length === 0
+  const onFinish = async (values: {
+    title: string
+  }): Promise<void> => {
+    const clearTitle = values.title.trim()
 
-  const validateAndSetError = (value: string): ValidationResult => {
-    const result = validateNewTodoTitle(value)
-
-    if (!result.isValid) {
-      setError(result.error || null)
-    } else {
-      setError(null)
-    }
-
-    return result
-  }
-
-  const onSubmit = async (
-    event: React.SubmitEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault()
-
-    const validationResult = validateNewTodoTitle(newTodoTitle)
-    if (!validationResult.isValid) {
-      setError(validationResult.error || null)
-      return
-    }
-
-    if (!validationResult.value) {
-      setError("Некорректный заголовок задачи")
+    if (!clearTitle) {
+      message.error("Название задачи не может быть пустым")
       return
     }
 
     try {
       await addTodo({
-        title: validationResult.value,
+        title: clearTitle,
         isDone: false,
       })
+
       await updateTodos()
-      setNewTodoTitle("")
-      if (newTodoInputRef?.current) {
-        newTodoInputRef.current.focus()
-      }
+      form.resetFields()
+
+      message.success("Задача успешно добавлена")
     } catch (error) {
-      setError(
+      message.error(
         "Не удалось добавить задачу. Пожалуйста, попробуйте снова."
       )
       await updateTodos()
     }
   }
 
-  const onInput = (event: React.InputEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget
-
-    validateAndSetError(value)
-    setNewTodoTitle(value)
-  }
-
-  const onBlur = () => {
-    setError(null)
+  const onFinishFailed = (): void => {
+    message.error("Пожалуйста, заполните поле корректно")
   }
 
   return (
-    <form
+    <Form
+      form={form}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      layout="inline"
       className="todo__form"
-      onSubmit={onSubmit}
     >
-      <Field
-        className="todo__field"
-        placeholder="Задача, которую нужно сделать..."
-        id="new-todo"
-        label=""
-        value={newTodoTitle}
-        onInput={onInput}
-        ref={newTodoInputRef}
-        error={error}
-        onBlur={onBlur}
-      />
-      <Button
-        type="submit"
-        isDisabled={isNewTodoTitleEmpty}
+      <Form.Item
+        name="title"
+        rules={[
+          {
+            required: true,
+            message: "Введите текст задачи.",
+          },
+          {
+            min: 2,
+            message: "Минимальная длина текста задачи - 2 символа.",
+          },
+          {
+            max: 64,
+            message: "Максимальная длина текста задачи - 64 символа.",
+          },
+          {
+            whitespace: true,
+            message: "Текст задачи не может быть пустым.",
+          },
+        ]}
       >
-        Добавить
-      </Button>
-    </form>
+        <Input
+          placeholder="Задача, которую нужно сделать..."
+          size="large"
+          allowClear
+        />
+      </Form.Item>
+
+      <Form.Item shouldUpdate>
+        {() => (
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            disabled={
+              !form.getFieldValue("title") ||
+              form.getFieldValue("title")?.trim().length === 0
+            }
+          >
+            Добавить
+          </Button>
+        )}
+      </Form.Item>
+    </Form>
   )
 }
+
 export default AddTodoForm

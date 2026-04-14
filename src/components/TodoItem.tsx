@@ -1,10 +1,14 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react"
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons"
+import { Button, Checkbox, Form, Input } from "antd"
+import { memo, useEffect } from "react"
 import { deleteTodo, updateTodo } from "../api/todoApi.js"
-import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle.js"
 import "../pages/TodosPage.scss"
-import { type Todo, type ValidationResult } from "../types/todo.ts"
-import Field from "../ui/Field.tsx"
-import IconButton from "../ui/IconButton.tsx"
+import { type Todo } from "../types/todo.ts"
 import "./TodoItem.scss"
 
 interface TodoItemProps {
@@ -28,60 +32,16 @@ const TodoItem = ({
   todos,
   setEditingTodoId,
 }: TodoItemProps) => {
-  const [newTodoTitle, setNewTodoTitle] = useState(title)
-  const [error, setError] = useState<string | null>(null)
-  const newTodoInputRef = useRef<HTMLInputElement>(null)
+  const [form] = Form.useForm()
 
   useEffect(() => {
-    if (!isEditing) {
-      setNewTodoTitle(title)
-      setError(null)
-    } else if (isEditing && newTodoInputRef.current) {
-      newTodoInputRef.current.focus()
+    if (isEditing) {
+      form.setFieldsValue({ title: title })
     }
-  }, [title, isEditing])
+  }, [title, isEditing, form])
 
-  const validateAndSetError = (value: string): ValidationResult => {
-    const result = validateNewTodoTitle(value)
-
-    if (!result.isValid) {
-      setError(result.error || null)
-    } else {
-      setError(null)
-    }
-
-    return result
-  }
-
-  const onInput = (event: React.InputEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget
-
-    validateAndSetError(value)
-    setNewTodoTitle(value)
-  }
-
-  const onBlur = () => {
-    setError(null)
-  }
-
-  const onSubmit = useCallback(
-    (event: React.SubmitEvent<HTMLFormElement>) => {
-      event.preventDefault()
-
-      handleAdmitClick()
-    },
-    [newTodoTitle]
-  )
-
-  const handleAdmitClick = async () => {
-    const validationResult = validateNewTodoTitle(newTodoTitle)
-
-    if (!validationResult.isValid) {
-      setError(validationResult.error || null)
-      return
-    }
-
-    const newTitle = validationResult.value
+  const handleAdmitClick = async (values: { title: string }) => {
+    const newTitle = values.title.trim()
     const originalTodo = todos.find((todo) => todo.id === id)
     if (!originalTodo) {
       return
@@ -106,17 +66,13 @@ const TodoItem = ({
       handleCloseClick()
       await updateTodos()
     } catch (error) {
-      setError(
-        "Не удалось отредактировать задачу. Пожалуйста, попробуйте снова."
-      )
       handleEditClick(id)
       await updateTodos()
     }
   }
 
   const handleCloseClick = () => {
-    setNewTodoTitle(title)
-    setError(null)
+    form.resetFields()
     setEditingTodoId(null)
   }
 
@@ -129,15 +85,12 @@ const TodoItem = ({
     }
   }
 
-  const handleToggleComplete = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newIsDone = event.target.checked
-
+  const handleToggleComplete = async (event: any) => {
+    const checked = event.target.checked
     try {
       await updateTodo(id, {
         title: title,
-        isDone: newIsDone,
+        isDone: checked,
       })
 
       await updateTodos()
@@ -152,43 +105,67 @@ const TodoItem = ({
 
   return (
     <li className={`todo-item ${className}`}>
-      <input
-        type="checkbox"
+      <Checkbox
         id={String(id)}
         checked={isDone}
-        className="todo-item__checkbox"
         onChange={handleToggleComplete}
       />
       {isEditing ? (
         <>
-          <form
+          <Form
+            form={form}
             className="todo-item__edit-form"
-            onSubmit={onSubmit}
+            onFinish={handleAdmitClick}
           >
-            <Field
-              className="todo-item__field-edit"
-              placeholder="Редактирование задачи..."
-              value={newTodoTitle}
-              onInput={onInput}
-              ref={newTodoInputRef}
-              id={String(id)}
-              error={error}
-              onBlur={onBlur}
-            />
-          </form>
-          <IconButton
-            className="primary"
+            <Form.Item
+              name="title"
+              rules={[
+                {
+                  required: true,
+                  message: "Введите текст задачи.",
+                },
+                {
+                  min: 2,
+                  message:
+                    "Минимальная длина текста задачи - 2 символа.",
+                },
+                {
+                  max: 64,
+                  message:
+                    "Максимальная длина текста задачи - 64 символа.",
+                },
+                {
+                  whitespace: true,
+                  message: "Текст задачи не может быть пустым.",
+                },
+              ]}
+            >
+              <Input
+                className="todo-item__field-edit"
+                placeholder="Редактирование задачи..."
+                onPressEnter={() => form.submit()}
+                id={String(id)}
+                size="large"
+                autoFocus
+              />
+            </Form.Item>
+          </Form>
+          <Button
+            type="primary"
             title="Подтвердить"
-            ariaDescription="Подтвердить"
-            iconType="admit"
-            onClick={handleAdmitClick}
+            shape="square"
+            size="large"
+            icon={<CheckOutlined />}
+            onClick={() => form.submit()}
           />
 
-          <IconButton
-            className="secondary"
+          <Button
+            color="red"
+            variant="solid"
             title="Закрыть"
-            ariaDescription="Закрыть"
-            iconType="close"
+            shape="square"
+            size="large"
+            icon={<CloseOutlined />}
             onClick={handleCloseClick}
           />
         </>
@@ -201,18 +178,21 @@ const TodoItem = ({
           >
             {title}
           </label>
-          <IconButton
-            className="primary"
+          <Button
+            type="primary"
             title="Редактировать"
-            ariaDescription="Редактировать"
-            iconType="edit"
+            shape="square"
+            size="large"
+            icon={<EditOutlined />}
             onClick={() => handleEditClick(id)}
           />
-          <IconButton
-            className="secondary"
+          <Button
+            color="red"
+            variant="solid"
             title="Удалить"
-            ariaDescription="Удалить"
-            iconType="delete"
+            shape="square"
+            size="large"
+            icon={<DeleteOutlined />}
             onClick={handleDeleteClick}
           />
         </>

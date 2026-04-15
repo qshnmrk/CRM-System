@@ -3,7 +3,7 @@ import type { ValidationResult } from "../types/todo.ts"
 export const validateNewTodoTitle = (
   title: string
 ): ValidationResult => {
-  const clearTitle = title.trim()
+  const clearTitle: string = title.trim()
   const hasOnlySpaces: boolean =
     title.length > 0 && clearTitle.length === 0
   const shortTitle: boolean = clearTitle.length < 2
@@ -14,17 +14,21 @@ export const validateNewTodoTitle = (
       isValid: false,
       error: `Текст задачи не может быть пустым.`,
     }
-  } else if (shortTitle) {
+  }
+
+  if (shortTitle) {
     return {
       isValid: false,
       error: "Минимальная длина текста задачи - 2 символа!",
     }
-  } else if (longTitle) {
+  }
+
+  if (longTitle) {
     return {
       isValid: false,
       error: "Максимальная длина текста задачи - 64 символа!",
     }
-  } else {
-    return { isValid: true, value: clearTitle }
   }
+
+  return { isValid: true, value: clearTitle }
 }

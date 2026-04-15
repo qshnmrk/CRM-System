@@ -1,8 +1,16 @@
-import type { FilterType } from "../types/todo.ts"
+import type {
+  FilterType,
+  MetaResponse,
+  Todo,
+  TodoInfo,
+  TodoRequest,
+} from "../types/todo.ts"
 
 const BASE_URL = "https://easydev.club/api/v1"
 
-export const getAllTodos = (filter: FilterType) => {
+export const getAllTodos = (
+  filter: FilterType
+): Promise<MetaResponse<Todo, TodoInfo>> => {
   let url = `${BASE_URL}/todos`
   if (filter) {
     url = `${url}?filter=${filter}`
@@ -11,28 +19,28 @@ export const getAllTodos = (filter: FilterType) => {
   return fetch(url).then((response) => response.json())
 }
 
-export const addTodo = (todo: { title: string; isDone: boolean }) =>
+export const addTodo = (todo: TodoRequest): Promise<Todo> =>
   fetch(`${BASE_URL}/todos`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(todo),
-  }).then()
+  }).then((response) => response.json())
 
 export const updateTodo = (
   todoId: number,
-  todo: { title: string; isDone: boolean }
-) =>
+  todo: TodoRequest
+): Promise<Todo> =>
   fetch(`${BASE_URL}/todos/${todoId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(todo),
-  }).then()
+  }).then((response) => response.json())
 
-export const deleteTodo = (todoId: number) =>
+export const deleteTodo = (todoId: number): Promise<void> =>
   fetch(`${BASE_URL}/todos/${todoId}`, {
     method: "DELETE",
-  }).then()
+  }).then(() => undefined)

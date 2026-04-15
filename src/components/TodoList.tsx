@@ -23,13 +23,11 @@ const TodoList = ({
     <ul className="todo__list">
       {todos.map((todo) => (
         <TodoItem
-          className="todo__item"
           key={todo.id}
           {...todo}
           isEditing={editingTodoId === todo.id}
           setEditingTodoId={setEditingTodoId}
           updateTodos={updateTodos}
-          todos={todos}
         />
       ))}
     </ul>

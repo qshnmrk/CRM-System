@@ -11,11 +11,11 @@ interface AddTodoFormProps {
 
 const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
   const [error, setError] = useState<string | null>(null)
-  const [newTodoTitle, setNewTodoTitle] = useState("")
+  const [newTodoTitle, setNewTodoTitle] = useState<string>("")
   const newTodoInputRef = useRef<HTMLInputElement>(null)
 
-  const clearNewTodoTitle = newTodoTitle.trim()
-  const isNewTodoTitleEmpty = clearNewTodoTitle.length === 0
+  const clearNewTodoTitle: string = newTodoTitle.trim()
+  const isNewTodoTitleEmpty: boolean = clearNewTodoTitle.length === 0
 
   const validateAndSetError = (value: string): ValidationResult => {
     const result = validateNewTodoTitle(value)
@@ -29,9 +29,9 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
     return result
   }
 
-  const onSubmit = async (
+  const handleFormSubmit = async (
     event: React.SubmitEvent<HTMLFormElement>
-  ) => {
+  ): Promise<void> => {
     event.preventDefault()
 
     const validationResult = validateNewTodoTitle(newTodoTitle)
@@ -63,21 +63,23 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
     }
   }
 
-  const onInput = (event: React.InputEvent<HTMLInputElement>) => {
+  const handleTitleInput = (
+    event: React.InputEvent<HTMLInputElement>
+  ): void => {
     const { value } = event.currentTarget
 
     validateAndSetError(value)
     setNewTodoTitle(value)
   }
 
-  const onBlur = () => {
+  const handleTitleBlur = (): void => {
     setError(null)
   }
 
   return (
     <form
       className="todo__form"
-      onSubmit={onSubmit}
+      onSubmit={handleFormSubmit}
     >
       <Field
         className="todo__field"
@@ -85,10 +87,10 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
         id="new-todo"
         label=""
         value={newTodoTitle}
-        onInput={onInput}
+        onInput={handleTitleInput}
         ref={newTodoInputRef}
         error={error}
-        onBlur={onBlur}
+        onBlur={handleTitleBlur}
       />
       <Button
         type="submit"

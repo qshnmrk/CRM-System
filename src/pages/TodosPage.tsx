@@ -6,7 +6,7 @@ import TodoMenu from "../components/TodoMenu.tsx"
 import {
   type FilterType,
   type Todo,
-  type TodoCounts,
+  type TodoInfo,
 } from "../types/todo.ts"
 import "./TodosPage.scss"
 
@@ -16,7 +16,7 @@ const TodosPage = () => {
   const [editingTodoId, setEditingTodoId] = useState<number | null>(
     null
   )
-  const [todoCounts, setTodoCounts] = useState<TodoCounts>({
+  const [todoCounts, setTodoCounts] = useState<TodoInfo>({
     all: 0,
     inWork: 0,
     completed: 0,
@@ -25,7 +25,7 @@ const TodosPage = () => {
   const [currentFilter, setCurrentFilter] =
     useState<FilterType>("all")
 
-  const updateTodos = useCallback(async () => {
+  const updateTodos = useCallback(async (): Promise<void> => {
     try {
       const response = await getAllTodos(currentFilter)
 
@@ -43,7 +43,7 @@ const TodosPage = () => {
     }
   }, [currentFilter])
 
-  const handleFilterChange = (filter: FilterType) => {
+  const handleFilterChange = (filter: FilterType): void => {
     setEditingTodoId(null)
     setCurrentFilter(filter)
   }

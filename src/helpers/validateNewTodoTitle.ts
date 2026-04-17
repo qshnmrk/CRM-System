@@ -14,17 +14,18 @@ export const validateNewTodoTitle = (
       isValid: false,
       error: `Текст задачи не может быть пустым.`,
     }
-  } else if (shortTitle) {
+  }
+  if (shortTitle) {
     return {
       isValid: false,
       error: "Минимальная длина текста задачи - 2 символа!",
     }
-  } else if (longTitle) {
+  }
+  if (longTitle) {
     return {
       isValid: false,
       error: "Максимальная длина текста задачи - 64 символа!",
     }
-  } else {
-    return { isValid: true, value: clearTitle }
   }
+  return { isValid: true, value: clearTitle }
 }

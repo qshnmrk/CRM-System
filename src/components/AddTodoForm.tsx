@@ -9,7 +9,7 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
   const [form] = Form.useForm()
   const { message } = App.useApp()
 
-  const onFinish = async (values: {
+  const handleFormSubmit = async (values: {
     title: string
   }): Promise<void> => {
     const clearTitle = values.title.trim()
@@ -37,15 +37,15 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
     }
   }
 
-  const onFinishFailed = (): void => {
+  const handleFailedSubmit = (): void => {
     message.error("Пожалуйста, заполните поле корректно")
   }
 
   return (
     <Form
       form={form}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
+      onFinish={handleFormSubmit}
+      onFinishFailed={handleFailedSubmit}
       layout="inline"
       className="todo__form"
     >

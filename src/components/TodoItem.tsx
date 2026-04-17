@@ -4,32 +4,33 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons"
-import { Button, Checkbox, Form, Input } from "antd"
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  type CheckboxChangeEvent,
+} from "antd"
 import { memo, useEffect } from "react"
 import { deleteTodo, updateTodo } from "../api/todoApi.js"
 import "../pages/TodosPage.scss"
-import { type Todo } from "../types/todo.ts"
 import "./TodoItem.scss"
 
 interface TodoItemProps {
-  className: string
   id: number
   title: string
   isDone: boolean
   updateTodos: () => void
   isEditing: boolean
-  todos: Todo[]
   setEditingTodoId: (id: number | null) => void
 }
 
 const TodoItem = ({
-  className = "",
   id,
   title,
   isDone,
   updateTodos,
   isEditing,
-  todos,
   setEditingTodoId,
 }: TodoItemProps) => {
   const [form] = Form.useForm()
@@ -40,16 +41,13 @@ const TodoItem = ({
     }
   }, [title, isEditing, form])
 
-  const handleAdmitClick = async (values: { title: string }) => {
+  const handleConfirmEdit = async (values: {
+    title: string
+  }): Promise<void> => {
     const newTitle = values.title.trim()
-    const originalTodo = todos.find((todo) => todo.id === id)
-    if (!originalTodo) {
-      return
-    }
-    const originalTitle = originalTodo.title
 
-    if (originalTitle === newTitle) {
-      handleCloseClick()
+    if (title === newTitle) {
+      handleCloseEdit()
       return
     }
 
@@ -63,20 +61,20 @@ const TodoItem = ({
         isDone: isDone,
       })
 
-      handleCloseClick()
+      handleCloseEdit()
       await updateTodos()
     } catch (error) {
-      handleEditClick(id)
+      handleStartEdit(id)
       await updateTodos()
     }
   }
 
-  const handleCloseClick = () => {
+  const handleCloseEdit = (): void => {
     form.resetFields()
     setEditingTodoId(null)
   }
 
-  const handleDeleteClick = async () => {
+  const handleDeleteTodo = async (): Promise<void> => {
     try {
       await deleteTodo(id)
       await updateTodos()
@@ -85,7 +83,9 @@ const TodoItem = ({
     }
   }
 
-  const handleToggleComplete = async (event: any) => {
+  const handleToggleStatus = async (
+    event: CheckboxChangeEvent
+  ): Promise<void> => {
     const checked = event.target.checked
     try {
       await updateTodo(id, {
@@ -99,23 +99,23 @@ const TodoItem = ({
     }
   }
 
-  const handleEditClick = (todoId: number) => {
+  const handleStartEdit = (todoId: number): void => {
     setEditingTodoId(todoId)
   }
 
   return (
-    <li className={`todo-item ${className}`}>
+    <li className={`todo-item todo__item`}>
       <Checkbox
         id={String(id)}
         checked={isDone}
-        onChange={handleToggleComplete}
+        onChange={handleToggleStatus}
       />
       {isEditing ? (
         <>
           <Form
             form={form}
             className="todo-item__edit-form"
-            onFinish={handleAdmitClick}
+            onFinish={handleConfirmEdit}
           >
             <Form.Item
               name="title"
@@ -166,7 +166,7 @@ const TodoItem = ({
             shape="square"
             size="large"
             icon={<CloseOutlined />}
-            onClick={handleCloseClick}
+            onClick={handleCloseEdit}
           />
         </>
       ) : (
@@ -184,7 +184,7 @@ const TodoItem = ({
             shape="square"
             size="large"
             icon={<EditOutlined />}
-            onClick={() => handleEditClick(id)}
+            onClick={() => handleStartEdit(id)}
           />
           <Button
             color="red"
@@ -193,7 +193,7 @@ const TodoItem = ({
             shape="square"
             size="large"
             icon={<DeleteOutlined />}
-            onClick={handleDeleteClick}
+            onClick={handleDeleteTodo}
           />
         </>
       )}

@@ -24,10 +24,14 @@ export interface TodoRequest {
   isDone?: boolean
 }
 
-export interface ValidationResult {
-  isValid: boolean
-  error?: string
-  value?: string
-}
+export type ValidationResult =
+  | {
+      isValid: true
+      value: string
+    }
+  | {
+      isValid: false
+      error: string
+    }
 
 export type Filter = "all" | "inWork" | "completed"

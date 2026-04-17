@@ -5,11 +5,11 @@ import type { ValidationResult } from "../types/todo.ts"
 import Button from "../ui/Button.tsx"
 import Field from "../ui/Field.tsx"
 
-interface AddTodoFormProps {
+interface Props {
   updateTodos: () => void
 }
 
-const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
+const AddTodoForm = ({ updateTodos }: Props) => {
   const [error, setError] = useState<string | null>(null)
   const [newTodoTitle, setNewTodoTitle] = useState<string>("")
   const newTodoInputRef = useRef<HTMLInputElement>(null)
@@ -87,10 +87,10 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
         id="new-todo"
         label=""
         value={newTodoTitle}
-        onInput={handleTitleInput}
+        onTitleInput={handleTitleInput}
         ref={newTodoInputRef}
         error={error}
-        onBlur={handleTitleBlur}
+        onTitleBlur={handleTitleBlur}
       />
       <Button
         type="submit"

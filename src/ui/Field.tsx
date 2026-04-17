@@ -1,29 +1,27 @@
 import { forwardRef } from "react"
 import "./Field.scss"
 
-interface FieldProps {
+interface Props {
   className?: string
   id: string
   placeholder?: string
   label?: string
-  type?: "text" | "email" | "password"
   value?: string | number
-  onInput?: (event: React.InputEvent<HTMLInputElement>) => void
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
+  onTitleInput?: (event: React.InputEvent<HTMLInputElement>) => void
+  onTitleBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   error?: string | null
 }
 
-const Field = forwardRef<HTMLInputElement, FieldProps>(
+const Field = forwardRef<HTMLInputElement, Props>(
   (
     {
       className = "",
       id,
       placeholder,
       label,
-      type = "text",
       value,
-      onInput,
-      onBlur,
+      onTitleInput,
+      onTitleBlur,
       error,
     },
     ref
@@ -39,11 +37,11 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
         <input
           id={id}
           className={`field__input ${error ? "is-invalid" : ""}`}
-          type={type}
+          type="text"
           placeholder={placeholder}
           value={value}
-          onInput={onInput}
-          onBlur={onBlur}
+          onInput={onTitleInput}
+          onBlur={onTitleBlur}
           ref={ref}
         />
         {error && <span className="field__error">{error}</span>}

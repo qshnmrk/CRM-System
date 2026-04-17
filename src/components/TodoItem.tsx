@@ -7,7 +7,7 @@ import Field from "../ui/Field.tsx"
 import IconButton from "../ui/IconButton.tsx"
 import "./TodoItem.scss"
 
-interface TodoItemProps {
+interface Props {
   id: number
   title: string
   isDone: boolean
@@ -23,7 +23,7 @@ const TodoItem = ({
   updateTodos,
   isEditing,
   setEditingTodoId,
-}: TodoItemProps) => {
+}: Props) => {
   const [newTodoTitle, setNewTodoTitle] = useState<string>(title)
   const [error, setError] = useState<string | null>(null)
   const newTodoInputRef = useRef<HTMLInputElement>(null)
@@ -62,7 +62,7 @@ const TodoItem = ({
     setError(null)
   }
 
-  const handleEditFormSubmit = useCallback(
+  const handleSaveTodoTitle = useCallback(
     (event: React.SubmitEvent<HTMLFormElement>): void => {
       event.preventDefault()
 
@@ -156,23 +156,23 @@ const TodoItem = ({
         <>
           <form
             className="todo-item__edit-form"
-            onSubmit={handleEditFormSubmit}
+            onSubmit={handleSaveTodoTitle}
           >
             <Field
               className="todo-item__field-edit"
               placeholder="Редактирование задачи..."
               value={newTodoTitle}
-              onInput={handleTitleInput}
+              onTitleInput={handleTitleInput}
               ref={newTodoInputRef}
               id={String(id)}
               error={error}
-              onBlur={handleTitleBlur}
+              onTitleBlur={handleTitleBlur}
             />
           </form>
           <IconButton
             className="primary"
             title="Подтвердить"
-            ariaDescription="Подтвердить"
+            ariaLabel="Подтвердить"
             iconType="admit"
             onClick={handleConfirmEdit}
           />
@@ -180,7 +180,7 @@ const TodoItem = ({
           <IconButton
             className="secondary"
             title="Закрыть"
-            ariaDescription="Закрыть"
+            ariaLabel="Закрыть"
             iconType="close"
             onClick={handleCloseEdit}
           />
@@ -197,14 +197,14 @@ const TodoItem = ({
           <IconButton
             className="primary"
             title="Редактировать"
-            ariaDescription="Редактировать"
+            ariaLabel="Редактировать"
             iconType="edit"
             onClick={() => handleStartEdit(id)}
           />
           <IconButton
             className="secondary"
             title="Удалить"
-            ariaDescription="Удалить"
+            ariaLabel="Удалить"
             iconType="delete"
             onClick={handleDeleteTodo}
           />

@@ -1,12 +1,12 @@
 import { memo } from "react"
-import { type FilterType } from "../types/todo.ts"
+import { type Filter } from "../types/todo.ts"
 
-interface TodoMenuProps {
+interface Props {
   todosAllCount: number
   todosInWorkCount: number
   todosCompletedCount: number
-  currentFilter: FilterType
-  onFilterChange: (filter: FilterType) => void
+  currentFilter: Filter
+  onFilterChange: (filter: Filter) => void
 }
 
 const TodoMenu = ({
@@ -15,7 +15,7 @@ const TodoMenu = ({
   todosCompletedCount,
   currentFilter,
   onFilterChange,
-}: TodoMenuProps) => {
+}: Props) => {
   return (
     <nav className="todo__menu">
       <ul className="todo__menu-list">

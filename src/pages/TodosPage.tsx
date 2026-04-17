@@ -4,7 +4,7 @@ import AddTodoForm from "../components/AddTodoForm.tsx"
 import TodoList from "../components/TodoList.tsx"
 import TodoMenu from "../components/TodoMenu.tsx"
 import {
-  type FilterType,
+  type Filter,
   type Todo,
   type TodoInfo,
 } from "../types/todo.ts"
@@ -22,8 +22,7 @@ const TodosPage = () => {
     completed: 0,
   })
 
-  const [currentFilter, setCurrentFilter] =
-    useState<FilterType>("all")
+  const [currentFilter, setCurrentFilter] = useState<Filter>("all")
 
   const updateTodos = useCallback(async (): Promise<void> => {
     try {
@@ -43,7 +42,7 @@ const TodosPage = () => {
     }
   }, [currentFilter])
 
-  const handleFilterChange = (filter: FilterType): void => {
+  const handleFilterChange = (filter: Filter): void => {
     setEditingTodoId(null)
     setCurrentFilter(filter)
   }

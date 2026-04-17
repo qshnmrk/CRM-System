@@ -30,4 +30,4 @@ export interface ValidationResult {
   value?: string
 }
 
-export type FilterType = "all" | "inWork" | "completed"
+export type Filter = "all" | "inWork" | "completed"

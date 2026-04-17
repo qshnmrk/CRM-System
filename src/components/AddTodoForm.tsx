@@ -29,7 +29,7 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
     return result
   }
 
-  const handleFormSubmit = async (
+  const handleAddTodo = async (
     event: React.SubmitEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault()
@@ -79,7 +79,7 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
   return (
     <form
       className="todo__form"
-      onSubmit={handleFormSubmit}
+      onSubmit={handleAddTodo}
     >
       <Field
         className="todo__field"

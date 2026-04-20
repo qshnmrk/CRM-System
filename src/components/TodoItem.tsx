@@ -119,6 +119,7 @@ const TodoItem = ({
           >
             <Form.Item
               name="title"
+              validateFirst
               rules={[
                 {
                   required: true,
@@ -143,7 +144,6 @@ const TodoItem = ({
               <Input
                 className="todo-item__field-edit"
                 placeholder="Редактирование задачи..."
-                onPressEnter={() => form.submit()}
                 id={String(id)}
                 size="large"
                 autoFocus

@@ -1,13 +1,13 @@
 import { Segmented } from "antd"
 import { memo } from "react"
-import { type FilterType } from "../types/todo.ts"
+import { type Filter } from "../types/todo.ts"
 
 interface TodoMenuProps {
   todosAllCount: number
   todosInWorkCount: number
   todosCompletedCount: number
-  currentFilter: FilterType
-  onFilterChange: (filter: FilterType) => void
+  currentFilter: Filter
+  onFilterChange: (filter: Filter) => void
 }
 
 const TodoMenu = ({
@@ -17,13 +17,13 @@ const TodoMenu = ({
   currentFilter,
   onFilterChange,
 }: TodoMenuProps) => {
-  const options: { label: string; value: FilterType }[] = [
+  const options: { label: string; value: Filter }[] = [
     { label: `Все (${todosAllCount})`, value: "all" },
     { label: `В работе (${todosInWorkCount})`, value: "inWork" },
     { label: `Сделано (${todosCompletedCount})`, value: "completed" },
   ]
   return (
-    <Segmented<FilterType>
+    <Segmented<Filter>
       options={options}
       value={currentFilter}
       onChange={onFilterChange}

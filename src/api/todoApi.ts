@@ -1,5 +1,6 @@
+import axios from "axios"
 import type {
-  FilterType,
+  Filter,
   MetaResponse,
   Todo,
   TodoInfo,
@@ -7,40 +8,26 @@ import type {
 } from "../types/todo.ts"
 
 const BASE_URL = "https://easydev.club/api/v1"
+const TODOS_URL = `${BASE_URL}/todos`
 
 export const getAllTodos = (
-  filter: FilterType
+  filter: Filter
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
-  let url = `${BASE_URL}/todos`
-  if (filter) {
-    url = `${url}?filter=${filter}`
-  }
-
-  return fetch(url).then((response) => response.json())
+  return axios
+    .get(TODOS_URL, { params: { filter } })
+    .then((response) => response.data)
 }
 
 export const addTodo = (todo: TodoRequest): Promise<Todo> =>
-  fetch(`${BASE_URL}/todos`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(todo),
-  }).then((response) => response.json())
+  axios.post(TODOS_URL, todo).then((response) => response.data)
 
 export const updateTodo = (
   todoId: number,
   todo: TodoRequest
 ): Promise<Todo> =>
-  fetch(`${BASE_URL}/todos/${todoId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(todo),
-  }).then((response) => response.json())
+  axios
+    .put(`${TODOS_URL}/${todoId}`, todo)
+    .then((response) => response.data)
 
 export const deleteTodo = (todoId: number): Promise<void> =>
-  fetch(`${BASE_URL}/todos/${todoId}`, {
-    method: "DELETE",
-  }).then(() => undefined)
+  axios.delete(`${TODOS_URL}/${todoId}`).then(() => undefined)

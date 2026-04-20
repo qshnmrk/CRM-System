@@ -51,10 +51,15 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
     >
       <Form.Item
         name="title"
+        validateFirst
         rules={[
           {
             required: true,
             message: "Введите текст задачи.",
+          },
+          {
+            whitespace: true,
+            message: "Текст задачи не может быть пустым.",
           },
           {
             min: 2,
@@ -63,10 +68,6 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
           {
             max: 64,
             message: "Максимальная длина текста задачи - 64 символа.",
-          },
-          {
-            whitespace: true,
-            message: "Текст задачи не может быть пустым.",
           },
         ]}
       >

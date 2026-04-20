@@ -1,8 +1,21 @@
+import { Layout } from "antd"
+
+const { Content } = Layout
+
 const ProfilePage = () => {
   return (
-    <>
-      <h1>Привет!</h1>
-    </>
+    <Layout>
+      <Content
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <h1>Привет!</h1>
+      </Content>
+    </Layout>
   )
 }
 

@@ -1,40 +1,47 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react"
-import { deleteTodo, updateTodo } from "../api/todoApi"
-import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle"
+import { deleteTodo, updateTodo } from "../api/todoApi.js"
+import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle.js"
 import "../pages/TodosPage.scss"
-import Field from "../ui/Field"
-import IconButton from "../ui/IconButton"
+import { type ValidationResult } from "../types/todo.ts"
+import Field from "../ui/Field.tsx"
+import IconButton from "../ui/IconButton.tsx"
 import "./TodoItem.scss"
-const TodoItem = (props) => {
-  const {
-    className = "",
-    id,
-    title,
-    isDone,
-    updateTodos,
-    isEditing,
-    todos,
-    setEditingTodoId,
-  } = props
 
-  const [newTodoTitle, setNewTodoTitle] = useState(title)
-  const [error, setError] = useState(null)
-  const newTodoInputRef = useRef(null)
+interface Props {
+  id: number
+  title: string
+  isDone: boolean
+  updateTodos: () => void
+  isEditing: boolean
+  setEditingTodoId: (id: number | null) => void
+}
+
+const TodoItem = ({
+  id,
+  title,
+  isDone,
+  updateTodos,
+  isEditing,
+  setEditingTodoId,
+}: Props) => {
+  const [newTodoTitle, setNewTodoTitle] = useState<string>(title)
+  const [error, setError] = useState<string | null>(null)
+  const newTodoInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isEditing) {
       setNewTodoTitle(title)
       setError(null)
-    } else if (isEditing && newTodoInputRef?.current) {
+    } else if (isEditing && newTodoInputRef.current) {
       newTodoInputRef.current.focus()
     }
   }, [title, isEditing])
 
-  const validateAndSetError = (value) => {
+  const validateAndSetError = (value: string): ValidationResult => {
     const result = validateNewTodoTitle(value)
 
     if (!result.isValid) {
-      setError(result.error)
+      setError(result.error || null)
     } else {
       setError(null)
     }
@@ -42,40 +49,44 @@ const TodoItem = (props) => {
     return result
   }
 
-  const onInput = (event) => {
-    const { value } = event.target
+  const handleTitleInput = (
+    event: React.InputEvent<HTMLInputElement>
+  ): void => {
+    const { value } = event.currentTarget
 
     validateAndSetError(value)
     setNewTodoTitle(value)
   }
 
-  const onBlur = () => {
+  const handleTitleBlur = (): void => {
     setError(null)
   }
 
-  const onSubmit = useCallback(
-    (event) => {
+  const handleSaveTodoTitle = useCallback(
+    (event: React.SubmitEvent<HTMLFormElement>): void => {
       event.preventDefault()
 
-      handleAdmitClick()
+      handleConfirmEdit()
     },
     [newTodoTitle]
   )
 
-  const handleAdmitClick = async () => {
+  const handleConfirmEdit = async (): Promise<void> => {
     const validationResult = validateNewTodoTitle(newTodoTitle)
 
     if (!validationResult.isValid) {
-      setError(validationResult.error)
+      setError(validationResult.error || null)
       return
     }
 
     const newTitle = validationResult.value
-    const originalTodo = todos.find((todo) => todo.id === id)
-    const originalTitle = originalTodo.title
 
-    if (originalTitle === newTitle) {
-      handleCloseClick()
+    if (title === newTitle) {
+      handleCloseEdit()
+      return
+    }
+
+    if (!newTitle) {
       return
     }
 
@@ -85,24 +96,24 @@ const TodoItem = (props) => {
         isDone: isDone,
       })
 
-      handleCloseClick()
+      handleCloseEdit()
       await updateTodos()
     } catch (error) {
       setError(
         "Не удалось отредактировать задачу. Пожалуйста, попробуйте снова."
       )
-      handleEditClick(id)
+      handleStartEdit(id)
       await updateTodos()
     }
   }
 
-  const handleCloseClick = () => {
+  const handleCloseEdit = (): void => {
     setNewTodoTitle(title)
     setError(null)
     setEditingTodoId(null)
   }
 
-  const handleDeleteClick = async () => {
+  const handleDeleteTodo = async (): Promise<void> => {
     try {
       await deleteTodo(id)
       await updateTodos()
@@ -111,7 +122,9 @@ const TodoItem = (props) => {
     }
   }
 
-  const handleToggleComplete = async (event) => {
+  const handleToggleStatus = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     const newIsDone = event.target.checked
 
     try {
@@ -126,84 +139,74 @@ const TodoItem = (props) => {
     }
   }
 
-  const handleEditClick = (todoId) => {
+  const handleStartEdit = (todoId: number): void => {
     setEditingTodoId(todoId)
   }
 
-  const currentTodo = todos.find((todo) => todo.id === id) || {
-    title,
-    isDone,
-  }
-  const displayTitle = currentTodo.title
-  const displayIsDone = currentTodo.isDone
-
   return (
-    <li className={`todo-item ${className}`}>
+    <li className={`todo-item todo__item`}>
       <input
         type="checkbox"
-        id={id}
-        checked={displayIsDone}
+        id={String(id)}
+        checked={isDone}
         className="todo-item__checkbox"
-        onChange={handleToggleComplete}
+        onChange={handleToggleStatus}
       />
       {isEditing ? (
         <>
           <form
             className="todo-item__edit-form"
-            onSubmit={onSubmit}
+            onSubmit={handleSaveTodoTitle}
           >
             <Field
               className="todo-item__field-edit"
               placeholder="Редактирование задачи..."
               value={newTodoTitle}
-              onInput={onInput}
+              onTitleInput={handleTitleInput}
               ref={newTodoInputRef}
+              id={String(id)}
               error={error}
-              onBlur={onBlur}
+              onTitleBlur={handleTitleBlur}
             />
           </form>
           <IconButton
             className="primary"
             title="Подтвердить"
-            ariaDescription="Подтвердить"
-            id={id}
+            ariaLabel="Подтвердить"
             iconType="admit"
-            onClick={handleAdmitClick}
+            onClick={handleConfirmEdit}
           />
 
           <IconButton
             className="secondary"
             title="Закрыть"
-            ariaDescription="Закрыть"
-            id={id}
+            ariaLabel="Закрыть"
             iconType="close"
-            onClick={handleCloseClick}
+            onClick={handleCloseEdit}
           />
         </>
       ) : (
         <>
           <label
-            className={`todo-item__label ${displayIsDone ? "completed" : ""}`}
-            htmlFor={id}
+            className={`todo-item__label ${isDone ? "completed" : ""}`}
+            htmlFor={String(id)}
             tabIndex={0}
           >
-            {displayTitle}
+            {title}
           </label>
           <IconButton
             className="primary"
             title="Редактировать"
-            ariaDescription="Редактировать"
-            id={id}
+            ariaLabel="Редактировать"
             iconType="edit"
-            onClick={() => handleEditClick(id)}
+            onClick={() => handleStartEdit(id)}
           />
           <IconButton
             className="secondary"
             title="Удалить"
-            ariaDescription="Удалить"
-            id={id}
+            ariaLabel="Удалить"
             iconType="delete"
-            onClick={handleDeleteClick}
+            onClick={handleDeleteTodo}
           />
         </>
       )}

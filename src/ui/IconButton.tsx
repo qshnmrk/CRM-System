@@ -32,23 +32,33 @@ const ICONS = {
   },
 }
 
-const IconButton = (props) => {
-  const {
-    className,
-    type = "button",
-    iconType,
-    title,
-    ariaDescription,
-    onClick,
-    isDisabled,
-  } = props
+type IconType = keyof typeof ICONS
 
+interface Props {
+  className: "primary" | "secondary"
+  type?: "button"
+  iconType: IconType
+  title?: string
+  ariaLabel?: string
+  onClick?: () => void
+  isDisabled?: boolean
+}
+
+const IconButton = ({
+  className,
+  type = "button",
+  iconType,
+  title,
+  ariaLabel,
+  onClick,
+  isDisabled,
+}: Props) => {
   return (
     <button
       className={`icon-button ${className}`}
       type={type}
       title={title}
-      aria-description={ariaDescription}
+      aria-label={ariaLabel}
       onClick={onClick}
       disabled={isDisabled}
     >

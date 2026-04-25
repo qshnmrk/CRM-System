@@ -1,24 +1,27 @@
 import { useRef, useState } from "react"
-import { addTodo } from "../api/todoApi"
-import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle"
-import Button from "../ui/Button"
-import Field from "../ui/Field"
+import { addTodo } from "../api/todoApi.js"
+import { validateNewTodoTitle } from "../helpers/validateNewTodoTitle.js"
+import type { ValidationResult } from "../types/todo.ts"
+import Button from "../ui/Button.tsx"
+import Field from "../ui/Field.tsx"
 
-const AddTodoForm = (props) => {
-  const { updateTodos } = props
+interface Props {
+  updateTodos: () => void
+}
 
-  const [error, setError] = useState(null)
-  const [newTodoTitle, setNewTodoTitle] = useState("")
-  const newTodoInputRef = useRef(null)
+const AddTodoForm = ({ updateTodos }: Props) => {
+  const [error, setError] = useState<string | null>(null)
+  const [newTodoTitle, setNewTodoTitle] = useState<string>("")
+  const newTodoInputRef = useRef<HTMLInputElement>(null)
 
-  const clearNewTodoTitle = newTodoTitle.trim()
-  const isNewTodoTitleEmpty = clearNewTodoTitle.length === 0
+  const clearNewTodoTitle: string = newTodoTitle.trim()
+  const isNewTodoTitleEmpty: boolean = clearNewTodoTitle.length === 0
 
-  const validateAndSetError = (value) => {
+  const validateAndSetError = (value: string): ValidationResult => {
     const result = validateNewTodoTitle(value)
 
     if (!result.isValid) {
-      setError(result.error)
+      setError(result.error || null)
     } else {
       setError(null)
     }
@@ -26,12 +29,19 @@ const AddTodoForm = (props) => {
     return result
   }
 
-  const onSubmit = async (event) => {
+  const handleAddTodo = async (
+    event: React.SubmitEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault()
 
     const validationResult = validateNewTodoTitle(newTodoTitle)
     if (!validationResult.isValid) {
-      setError(validationResult.error)
+      setError(validationResult.error || null)
+      return
+    }
+
+    if (!validationResult.value) {
+      setError("Некорректный заголовок задачи")
       return
     }
 
@@ -53,21 +63,23 @@ const AddTodoForm = (props) => {
     }
   }
 
-  const onInput = (event) => {
-    const { value } = event.target
+  const handleTitleInput = (
+    event: React.InputEvent<HTMLInputElement>
+  ): void => {
+    const { value } = event.currentTarget
 
     validateAndSetError(value)
     setNewTodoTitle(value)
   }
 
-  const onBlur = () => {
+  const handleTitleBlur = (): void => {
     setError(null)
   }
 
   return (
     <form
       className="todo__form"
-      onSubmit={onSubmit}
+      onSubmit={handleAddTodo}
     >
       <Field
         className="todo__field"
@@ -75,10 +87,10 @@ const AddTodoForm = (props) => {
         id="new-todo"
         label=""
         value={newTodoTitle}
-        onInput={onInput}
+        onTitleInput={handleTitleInput}
         ref={newTodoInputRef}
         error={error}
-        onBlur={onBlur}
+        onTitleBlur={handleTitleBlur}
       />
       <Button
         type="submit"

@@ -1,24 +1,30 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react"
-import { getAllTodos } from "../api/todoApi"
-import AddTodoForm from "../components/AddTodoForm"
-import TodoList from "../components/TodoList"
-import TodoMenu from "../components/TodoMenu"
+import { memo, useCallback, useEffect, useState } from "react"
+import { getAllTodos } from "../api/todoApi.js"
+import AddTodoForm from "../components/AddTodoForm.tsx"
+import TodoList from "../components/TodoList.tsx"
+import TodoMenu from "../components/TodoMenu.tsx"
+import {
+  type Filter,
+  type Todo,
+  type TodoInfo,
+} from "../types/todo.ts"
 import "./TodosPage.scss"
 
 const TodosPage = () => {
-  const [todos, setTodos] = useState([])
+  const [todos, setTodos] = useState<Todo[]>([])
 
-  const [editingTodoId, setEditingTodoId] = useState(null)
-  const [todoCounts, setTodoCounts] = useState({
+  const [editingTodoId, setEditingTodoId] = useState<number | null>(
+    null
+  )
+  const [todoCounts, setTodoCounts] = useState<TodoInfo>({
     all: 0,
     inWork: 0,
     completed: 0,
   })
 
-  const newTodoInputRef = useRef(null)
-  const [currentFilter, setCurrentFilter] = useState("all")
+  const [currentFilter, setCurrentFilter] = useState<Filter>("all")
 
-  const updateTodos = useCallback(async () => {
+  const updateTodos = useCallback(async (): Promise<void> => {
     try {
       const response = await getAllTodos(currentFilter)
 
@@ -36,12 +42,9 @@ const TodosPage = () => {
     }
   }, [currentFilter])
 
-  const handleFilterChange = (filter) => {
+  const handleFilterChange = (filter: Filter): void => {
     setEditingTodoId(null)
     setCurrentFilter(filter)
-    if (newTodoInputRef?.current) {
-      newTodoInputRef.current.focus()
-    }
   }
 
   useEffect(() => {

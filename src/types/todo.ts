@@ -11,7 +11,7 @@ export interface TodoInfo {
   completed: number
 }
 
-export interface MetaResponse<T, N = undefined> {
+export interface MetaResponse<T, N> {
   data: T[]
   info?: N
   meta: {

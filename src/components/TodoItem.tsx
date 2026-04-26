@@ -9,6 +9,7 @@ import {
   Checkbox,
   Form,
   Input,
+  message,
   type CheckboxChangeEvent,
 } from "antd"
 import { memo, useEffect } from "react"
@@ -63,7 +64,11 @@ const TodoItem = ({
 
       handleCloseEdit()
       await updateTodos()
+      message.success("Задача успешно обновлена")
     } catch (error) {
+      message.error(
+        "Не удалось обновить задачу. Пожалуйста, попробуйте снова."
+      )
       handleStartEdit(id)
       await updateTodos()
     }

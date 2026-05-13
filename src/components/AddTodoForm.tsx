@@ -1,5 +1,6 @@
 import { App, Button, Form, Input } from "antd"
 import { addTodo } from "../api/todoApi.js"
+import { todoTitleRules } from "../validation/todoValidation.ts"
 
 interface AddTodoFormProps {
   updateTodos: () => void
@@ -52,24 +53,7 @@ const AddTodoForm = ({ updateTodos }: AddTodoFormProps) => {
       <Form.Item
         name="title"
         validateFirst
-        rules={[
-          {
-            required: true,
-            message: "Введите текст задачи.",
-          },
-          {
-            whitespace: true,
-            message: "Текст задачи не может быть пустым.",
-          },
-          {
-            min: 2,
-            message: "Минимальная длина текста задачи - 2 символа.",
-          },
-          {
-            max: 64,
-            message: "Максимальная длина текста задачи - 64 символа.",
-          },
-        ]}
+        rules={todoTitleRules}
       >
         <Input
           placeholder="Задача, которую нужно сделать..."

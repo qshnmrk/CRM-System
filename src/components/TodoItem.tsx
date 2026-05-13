@@ -15,6 +15,7 @@ import {
 import { memo, useEffect } from "react"
 import { deleteTodo, updateTodo } from "../api/todoApi.js"
 import "../pages/TodosPage.scss"
+import { todoTitleRules } from "../validation/todoValidation.ts"
 import "./TodoItem.scss"
 
 interface TodoItemProps {
@@ -125,26 +126,7 @@ const TodoItem = ({
             <Form.Item
               name="title"
               validateFirst
-              rules={[
-                {
-                  required: true,
-                  message: "Введите текст задачи.",
-                },
-                {
-                  min: 2,
-                  message:
-                    "Минимальная длина текста задачи - 2 символа.",
-                },
-                {
-                  max: 64,
-                  message:
-                    "Максимальная длина текста задачи - 64 символа.",
-                },
-                {
-                  whitespace: true,
-                  message: "Текст задачи не может быть пустым.",
-                },
-              ]}
+              rules={todoTitleRules}
             >
               <Input
                 className="todo-item__field-edit"

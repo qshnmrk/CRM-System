@@ -10,24 +10,27 @@ import type {
 const BASE_URL = "https://easydev.club/api/v1"
 const TODOS_URL = `${BASE_URL}/todos`
 
-export const getAllTodos = (
+export const getAllTodos = async (
   filter: Filter
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
-  return axios
-    .get(TODOS_URL, { params: { filter } })
-    .then((response) => response.data)
+  const response = await axios.get(TODOS_URL, { params: { filter } })
+  return response.data
 }
 
-export const addTodo = (todo: TodoRequest): Promise<Todo> =>
-  axios.post(TODOS_URL, todo).then((response) => response.data)
+export const addTodo = async (todo: TodoRequest): Promise<Todo> => {
+  const response = await axios.post(TODOS_URL, todo)
+  return response.data
+}
 
-export const updateTodo = (
+export const updateTodo = async (
   todoId: number,
   todo: TodoRequest
-): Promise<Todo> =>
-  axios
-    .put(`${TODOS_URL}/${todoId}`, todo)
-    .then((response) => response.data)
+): Promise<Todo> => {
+  const response = await axios.put(`${TODOS_URL}/${todoId}`, todo)
+  return response.data
+}
 
-export const deleteTodo = (todoId: number): Promise<void> =>
-  axios.delete(`${TODOS_URL}/${todoId}`).then(() => undefined)
+export const deleteTodo = async (todoId: number): Promise<void> => {
+  await axios.delete(`${TODOS_URL}/${todoId}`)
+  return undefined
+}

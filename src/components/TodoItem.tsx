@@ -118,43 +118,60 @@ const TodoItem = ({
       />
       {isEditing ? (
         <>
-          <Form
-            form={form}
-            className="todo-item__edit-form"
-            onFinish={handleConfirmEdit}
-          >
-            <Form.Item
-              name="title"
-              validateFirst
-              rules={todoTitleRules}
+          <>
+            <Form
+              form={form}
+              onFinish={handleConfirmEdit}
+              id={`edit-form-${id}`}
+              style={{ flex: 1, height: 50 }}
             >
-              <Input
-                className="todo-item__field-edit"
-                placeholder="Редактирование задачи..."
-                id={String(id)}
-                size="large"
-                autoFocus
-              />
-            </Form.Item>
-          </Form>
-          <Button
-            type="primary"
-            title="Подтвердить"
-            shape="square"
-            size="large"
-            icon={<CheckOutlined />}
-            onClick={() => form.submit()}
-          />
+              <Form.Item
+                name="title"
+                validateFirst
+                rules={todoTitleRules}
+                style={{ marginBottom: 0, flex: 1 }}
+              >
+                <Input
+                  className="todo-item__field-edit"
+                  placeholder="Редактирование задачи..."
+                  id={String(id)}
+                  size="large"
+                  autoFocus
+                />
+              </Form.Item>
+            </Form>
 
-          <Button
-            color="red"
-            variant="solid"
-            title="Закрыть"
-            shape="square"
-            size="large"
-            icon={<CloseOutlined />}
-            onClick={handleCloseEdit}
-          />
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                form={`edit-form-${id}`}
+                title="Подтвердить"
+                shape="square"
+                size="large"
+                icon={<CheckOutlined />}
+                style={{ flexShrink: 0, marginRight: 10 }}
+              />
+
+              <Button
+                color="red"
+                variant="solid"
+                title="Закрыть"
+                shape="square"
+                size="large"
+                icon={<CloseOutlined />}
+                onClick={handleCloseEdit}
+                style={{ flexShrink: 0 }}
+              />
+            </div>
+          </>
         </>
       ) : (
         <>

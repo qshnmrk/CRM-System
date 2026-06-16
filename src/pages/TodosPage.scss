@@ -1,4 +1,6 @@
 .todo {
+  width: 500px;
+  margin: 0 auto;
   font-family: var(--font-family-base);
   color: var(--color-on-background);
   display: flex;
@@ -19,6 +21,7 @@
   }
 
   &__menu {
+    width: 500px;
     &-list {
       display: flex;
       justify-content: space-between;

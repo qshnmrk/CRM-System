@@ -2,11 +2,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: start;
-  min-height: 200vh;
-  padding: 100px 30px;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
   font-family: "Montserrat", sans-serif;
   color: var(--color-black);
   background-color: var(--color-background);
+  [class*="ant-"] {
+    font-family: "Montserrat", sans-serif !important;
+  }
 }
 
 input,
@@ -19,4 +23,9 @@ button {
   outline: 2px dashed var(--color-black);
   outline-offset: 4px;
   transition-duration: 0s !important;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
